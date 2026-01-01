@@ -5,7 +5,7 @@ const Start = () => {
     return (
         <div className="min-h-screen bg-cover bg-center bg-[url('/Home.png')]">
             {/* Header */}
-            <div className="fixed top-0 left-0 w-full h-20 z-50 bg-white/15 backdrop-blur-md shadow-sm">
+            <div className="fixed top-0 left-0 w-full h-20 z-50 bg-black/40 backdrop-blur-md shadow-sm">
                 <div className="flex items-center h-full">
                     <img className='w-44 ml-8 drop-shadow-lg' src="/Logo.png" alt="Logo"/>
                 </div>
