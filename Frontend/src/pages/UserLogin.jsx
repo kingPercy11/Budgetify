@@ -58,7 +58,10 @@ const UserLogin = () => {
 
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-blue-500 via-blue-400 to-cyan-400 flex items-center justify-center p-6">
+        <div className="min-h-screen bg-cover bg-center bg-[url('/Home.png')] flex items-center justify-center p-6 relative">
+            {/* Translucent overlay */}
+            <div className="absolute inset-0 bg-blue-600/30 backdrop-blur-sm"></div>
+            
             <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md relative z-10">
                 <Link to='/' className='block w-fit mx-auto mb-6'>
                     <img className='w-52 hover:scale-105 transition-transform duration-300' src="/Logo.png" alt="Budgetify Logo" />
