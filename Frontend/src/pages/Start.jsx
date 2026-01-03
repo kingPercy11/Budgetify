@@ -7,7 +7,7 @@ const Start = () => {
             {/* Header */}
             <div className="fixed top-0 left-0 w-full h-20 z-50 bg-black/40 backdrop-blur-md shadow-sm">
                 <div className="flex items-center h-full">
-                    <img className='w-44 ml-8 drop-shadow-lg' src="/Logo.png" alt="Logo"/>
+                    <img className='w-52 ml-8 drop-shadow-[0_0_25px_rgba(59,130,246,0.8)] brightness-110' src="/Logo.png" alt="Budgetify Logo"/>
                 </div>
             </div> 
             

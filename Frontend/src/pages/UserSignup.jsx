@@ -52,7 +52,7 @@ const UserSignup = () => {
       
       <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md relative z-10">
         <Link to='/' className='block w-fit mx-auto mb-6'>
-          <img className='w-52 hover:scale-105 transition-transform duration-300' src="/Logo.png" alt="Budgetify Logo" />
+          <img className='w-64 hover:scale-105 transition-transform duration-300 drop-shadow-[0_0_30px_rgba(59,130,246,0.7)] hover:drop-shadow-[0_0_40px_rgba(59,130,246,1)]' src="/Logo.png" alt="Budgetify Logo" />
         </Link>
         
         <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Create Account</h2>
