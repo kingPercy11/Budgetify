@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 
-const AddExpense = ({ isOpen, onClose, onExpenseAdded }) => {
+const UpdateExpense = ({ isOpen, onClose, expense, onExpenseUpdated }) => {
   const [amount, setAmount] = useState('')
   const [category, setCategory] = useState('')
   const [date, setDate] = useState('')
@@ -9,7 +9,19 @@ const AddExpense = ({ isOpen, onClose, onExpenseAdded }) => {
   const [error, setError] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
 
-  const handleAddExpense = async (e) => {
+  // Pre-fill form with existing expense data
+  useEffect(() => {
+    if (expense) {
+      setAmount(expense.amount.toString())
+      setCategory(expense.category)
+      // Format date to YYYY-MM-DD for input
+      const formattedDate = new Date(expense.date).toISOString().split('T')[0]
+      setDate(formattedDate)
+      setDescription(expense.description || '')
+    }
+  }, [expense])
+
+  const handleUpdateExpense = async (e) => {
     e.preventDefault()
     setError('')
     setSuccessMessage('')
@@ -22,8 +34,8 @@ const AddExpense = ({ isOpen, onClose, onExpenseAdded }) => {
 
     try {
       const token = localStorage.getItem('token')
-      const response = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/expenditures/add`,
+      const response = await axios.put(
+        `${import.meta.env.VITE_BASE_URL}/expenditures/update/${expense._id}`,
         {
           amount: parseFloat(amount),
           category,
@@ -37,17 +49,11 @@ const AddExpense = ({ isOpen, onClose, onExpenseAdded }) => {
         }
       )
 
-      setSuccessMessage('Expense added successfully!')
-      
-      // Reset form
-      setAmount('')
-      setCategory('')
-      setDate('')
-      setDescription('')
+      setSuccessMessage('Expense updated successfully!')
       
       // Call callback if provided
-      if (onExpenseAdded) {
-        onExpenseAdded(response.data)
+      if (onExpenseUpdated) {
+        onExpenseUpdated(response.data)
       }
       
       // Close modal after 1.5 seconds
@@ -56,11 +62,11 @@ const AddExpense = ({ isOpen, onClose, onExpenseAdded }) => {
         setSuccessMessage('')
       }, 1500)
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to add expense')
+      setError(err.response?.data?.error || 'Failed to update expense')
     }
   }
 
-  if (!isOpen) return null
+  if (!isOpen || !expense) return null
 
   return (
     <div className='fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50'>
@@ -73,7 +79,7 @@ const AddExpense = ({ isOpen, onClose, onExpenseAdded }) => {
           <i className="ri-close-line text-3xl"></i>
         </button>
 
-        <h2 className='text-3xl font-bold text-blue-900 mb-6 drop-shadow-sm'>Add New Expense</h2>
+        <h2 className='text-3xl font-bold text-blue-900 mb-6 drop-shadow-sm'>Update Expense</h2>
 
         {error && (
           <div className='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4'>
@@ -87,7 +93,7 @@ const AddExpense = ({ isOpen, onClose, onExpenseAdded }) => {
           </div>
         )}
 
-        <form onSubmit={handleAddExpense}>
+        <form onSubmit={handleUpdateExpense}>
           {/* Amount */}
           <div className='mb-4'>
             <label className='block text-sm font-bold text-blue-900 mb-2'>
@@ -166,9 +172,9 @@ const AddExpense = ({ isOpen, onClose, onExpenseAdded }) => {
             </button>
             <button
               type='submit'
-              className='flex-1 px-6 py-3 bg-linear-to-r from-green-500 to-green-600 text-white font-bold rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105'
+              className='flex-1 px-6 py-3 bg-linear-to-r from-yellow-500 to-yellow-600 text-white font-bold rounded-xl hover:from-yellow-600 hover:to-yellow-700 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105'
             >
-              Add Expense
+              Update Expense
             </button>
           </div>
         </form>
@@ -177,4 +183,4 @@ const AddExpense = ({ isOpen, onClose, onExpenseAdded }) => {
   )
 }
 
-export default AddExpense
+export default UpdateExpense
