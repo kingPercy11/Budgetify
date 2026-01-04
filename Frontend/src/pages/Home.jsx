@@ -14,7 +14,7 @@ const Home = () => {
   const cardsRef = useRef([])
 
   useEffect(() => {
-    // Header animation
+
     gsap.fromTo('.header-logo', 
       { x: -100, opacity: 0 },
       { x: 0, opacity: 1, duration: 1, ease: 'power3.out' }
@@ -25,7 +25,6 @@ const Home = () => {
       { x: 0, opacity: 1, duration: 1, ease: 'power3.out' }
     )
 
-    // Welcome text animation - staggered entry
     const timeline = gsap.timeline()
     
     timeline.fromTo(helloRef.current,
@@ -53,13 +52,11 @@ const Home = () => {
       '-=0.4'
     )
 
-    // Cards animation - staggered from bottom
     gsap.fromTo(cardsRef.current,
       { y: 100, opacity: 0 },
       { y: 0, opacity: 1, duration: 0.8, stagger: 0.15, ease: 'power3.out', delay: 0.5 }
     )
 
-    // Gentle floating animation for cards
     cardsRef.current.forEach((card, index) => {
       if (card) {
         gsap.to(card, {
@@ -69,7 +66,7 @@ const Home = () => {
           yoyo: true,
           ease: 'sine.inOut',
           delay: 1 + (index * 0.1),
-          overwrite: false // Allow CSS transforms to work alongside GSAP
+          overwrite: false 
         })
       }
     })
