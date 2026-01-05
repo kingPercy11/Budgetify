@@ -134,7 +134,7 @@ const Home = () => {
                         <h1 ref={helloRef} className='text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-blue-200 drop-shadow-2xl leading-none'>
                             Hello  
                         </h1>
-                        <h1 ref={userRef} className='text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-blue-900 drop-shadow-2xl leading-none break-words max-w-full'>
+                        <h1 ref={userRef} className='text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-blue-900 drop-shadow-2xl leading-none wrap-break-word max-w-full'>
                             {user?.username || 'User'}
                         </h1>
                         <h1 ref={commaRef} className='text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-blue-200 drop-shadow-2xl leading-none'>
@@ -152,7 +152,7 @@ const Home = () => {
                 </div>
 
                 {/* Action Cards */}
-                <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 w-11/12 max-w-7xl'>
+                <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 w-full max-w-7xl'>
                     <Link to='/expenses' ref={el => cardsRef.current[0] = el} className='group bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-3xl shadow-xl hover:shadow-2xl p-6 sm:p-8 transition-all duration-300 cursor-pointer border border-white/30 hover:scale-105'>
                         <div className='flex flex-col items-center text-center'>
                             <div className='bg-cyan-400/40 p-4 rounded-2xl mb-4 group-hover:bg-cyan-400/60 transition-all duration-300'>

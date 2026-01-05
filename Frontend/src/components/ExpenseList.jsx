@@ -152,22 +152,22 @@ const ExpenseList = ({ startDate, endDate, refreshTrigger }) => {
                 <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4'>
                   <div className='flex-1 min-w-0'>
                     <div className='flex flex-wrap items-center gap-2 sm:gap-3 mb-2'>
-                      <span className='text-xl sm:text-2xl font-bold text-blue-900 break-words'>
+                      <span className='text-xl sm:text-2xl font-bold text-blue-900 wrap-break-word'>
                         {formatAmount(expense.amount)}
                       </span>
-                      <span className='px-2 sm:px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold capitalize break-words'>
+                      <span className='px-2 sm:px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold capitalize wrap-break-word'>
                         {expense.category}
                       </span>
                     </div>
                     <div className='flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-gray-600'>
                       <span className='flex items-center gap-1'>
                         <i className="ri-calendar-line"></i>
-                        <span className='break-words'>{formatDate(expense.date)}</span>
+                        <span className='wrap-break-word'>{formatDate(expense.date)}</span>
                       </span>
                       {expense.description && (
-                        <span className='flex items-start sm:items-center gap-1 text-gray-500 break-words'>
+                        <span className='flex items-start sm:items-center gap-1 text-gray-500 wrap-break-word'>
                           <i className="ri-file-text-line mt-0.5 sm:mt-0"></i>
-                          <span className='break-words'>{expense.description}</span>
+                          <span className='wrap-break-word'>{expense.description}</span>
                         </span>
                       )}
                     </div>
