@@ -130,14 +130,14 @@ const Home = () => {
             <div className="relative z-10 pt-32 px-8 lg:px-16 pb-16">
                 {/* Welcome Section */}
                 <div className='mb-12'>
-                    <div className='flex items-end gap-4 mb-4'>
-                        <h1 ref={helloRef} className='text-7xl lg:text-8xl font-bold text-blue-200 drop-shadow-2xl leading-none'>
+                    <div className='flex flex-wrap items-end gap-2 sm:gap-4 mb-4'>
+                        <h1 ref={helloRef} className='text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-blue-200 drop-shadow-2xl leading-none'>
                             Hello  
                         </h1>
-                        <h1 ref={userRef} className='text-8xl lg:text-9xl font-bold text-blue-900 drop-shadow-2xl leading-none'>
+                        <h1 ref={userRef} className='text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-blue-900 drop-shadow-2xl leading-none break-words max-w-full'>
                             {user?.username || 'User'}
                         </h1>
-                        <h1 ref={commaRef} className='text-7xl lg:text-8xl font-bold text-blue-200 drop-shadow-2xl leading-none'>
+                        <h1 ref={commaRef} className='text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-blue-200 drop-shadow-2xl leading-none'>
                             ,
                         </h1>
                     </div>
@@ -152,44 +152,44 @@ const Home = () => {
                 </div>
 
                 {/* Action Cards */}
-                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl'>
-                    <Link to='/expenses' ref={el => cardsRef.current[0] = el} className='group bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-3xl shadow-xl hover:shadow-2xl p-8 transition-all duration-300 cursor-pointer border border-white/30 hover:scale-105'>
+                <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 w-11/12 max-w-7xl'>
+                    <Link to='/expenses' ref={el => cardsRef.current[0] = el} className='group bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-3xl shadow-xl hover:shadow-2xl p-6 sm:p-8 transition-all duration-300 cursor-pointer border border-white/30 hover:scale-105'>
                         <div className='flex flex-col items-center text-center'>
                             <div className='bg-cyan-400/40 p-4 rounded-2xl mb-4 group-hover:bg-cyan-400/60 transition-all duration-300'>
-                                <img className='w-16 h-16' src="/icons/expenses.png" alt="Expenses Icon" />
+                                <img className='w-12 h-12 sm:w-16 sm:h-16' src="/icons/expenses.png" alt="Expenses Icon" />
                             </div>
-                            <h3 className='text-xl font-bold text-white mb-2'>Manage Expenses</h3>
-                            <p className='text-sm text-white/80'>Track and organize your daily expenses</p>
+                            <h3 className='text-lg sm:text-xl font-bold text-white mb-2'>Manage Expenses</h3>
+                            <p className='text-xs sm:text-sm text-white/80'>Track and organize your daily expenses</p>
                         </div>
                     </Link>
 
-                    <Link to='/analysis' ref={el => cardsRef.current[1] = el} className='group bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-3xl shadow-xl hover:shadow-2xl p-8 transition-all duration-300 cursor-pointer border border-white/30 hover:scale-105'>
+                    <Link to='/analysis' ref={el => cardsRef.current[1] = el} className='group bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-3xl shadow-xl hover:shadow-2xl p-6 sm:p-8 transition-all duration-300 cursor-pointer border border-white/30 hover:scale-105'>
                         <div className='flex flex-col items-center text-center'>
                             <div className='bg-emerald-400/40 p-4 rounded-2xl mb-4 group-hover:bg-emerald-400/60 transition-all duration-300'>
-                                <img className='w-16 h-16' src="/icons/analysis.png" alt="Analysis Icon" />
+                                <img className='w-12 h-12 sm:w-16 sm:h-16' src="/icons/analysis.png" alt="Analysis Icon" />
                             </div>
-                            <h3 className='text-xl font-bold text-white mb-2'>Analyze Spending</h3>
-                            <p className='text-sm text-white/80'>View insights and spending patterns</p>
+                            <h3 className='text-lg sm:text-xl font-bold text-white mb-2'>Analyze Spending</h3>
+                            <p className='text-xs sm:text-sm text-white/80'>View insights and spending patterns</p>
                         </div>
                     </Link>
 
-                    <Link to='/settings' ref={el => cardsRef.current[2] = el} className='group bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-3xl shadow-xl hover:shadow-2xl p-8 transition-all duration-300 cursor-pointer border border-white/30 hover:scale-105'>
+                    <Link to='/limits' ref={el => cardsRef.current[2] = el} className='group bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-3xl shadow-xl hover:shadow-2xl p-6 sm:p-8 transition-all duration-300 cursor-pointer border border-white/30 hover:scale-105'>
                         <div className='flex flex-col items-center text-center'>
                             <div className='bg-pink-400/40 p-4 rounded-2xl mb-4 group-hover:bg-pink-400/60 transition-all duration-300'>
-                                <img className='w-16 h-16' src="/icons/limits.png" alt="Goals Icon" />
+                                <img className='w-12 h-12 sm:w-16 sm:h-16' src="/icons/limits.png" alt="Goals Icon" />
                             </div>
-                            <h3 className='text-xl font-bold text-white mb-2'>Set Goals</h3>
-                            <p className='text-sm text-white/80'>Define and track financial goals</p>
+                            <h3 className='text-lg sm:text-xl font-bold text-white mb-2'>Set Goals</h3>
+                            <p className='text-xs sm:text-sm text-white/80'>Define and track financial goals</p>
                         </div>
                     </Link>
 
-                    <Link to='/account' ref={el => cardsRef.current[3] = el} className='group bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-3xl shadow-xl hover:shadow-2xl p-8 transition-all duration-300 cursor-pointer border border-white/30 hover:scale-105'>
+                    <Link to='/account' ref={el => cardsRef.current[3] = el} className='group bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-3xl shadow-xl hover:shadow-2xl p-6 sm:p-8 transition-all duration-300 cursor-pointer border border-white/30 hover:scale-105'>
                         <div className='flex flex-col items-center text-center'>
                             <div className='bg-amber-400/40 p-4 rounded-2xl mb-4 group-hover:bg-amber-400/60 transition-all duration-300'>
-                                <img className='w-16 h-16' src="/icons/settings.png" alt="Settings Icon" />
+                                <img className='w-12 h-12 sm:w-16 sm:h-16' src="/icons/settings.png" alt="Settings Icon" />
                             </div>
-                            <h3 className='text-xl font-bold text-white mb-2'>Settings</h3>
-                            <p className='text-sm text-white/80'>Manage your account preferences</p>
+                            <h3 className='text-lg sm:text-xl font-bold text-white mb-2'>Settings</h3>
+                            <p className='text-xs sm:text-sm text-white/80'>Manage your account preferences</p>
                         </div>
                     </Link>
                 </div>

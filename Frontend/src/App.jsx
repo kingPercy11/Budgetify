@@ -7,6 +7,9 @@ import UserSignup from './pages/UserSignup'
 import UserProtectWrapper from './pages/UserProtectWrapper'
 import Home from './pages/Home'
 import Expense from './pages/Expense'
+import Account from './pages/Account'
+import Limits from './pages/Limits'
+import Analysis from './pages/Analysis'
 
 const App = () => {
   return (
@@ -28,6 +31,21 @@ const App = () => {
         <Route path="/expenses" element={
           <UserProtectWrapper>
             <Expense />
+          </UserProtectWrapper>
+        } />
+        <Route path="/account" element={
+          <UserProtectWrapper>
+            <Account />
+          </UserProtectWrapper>
+        } />
+        <Route path="/limits" element={
+          <UserProtectWrapper>
+            <Limits />
+          </UserProtectWrapper>
+        } />
+        <Route path="/analysis" element={
+          <UserProtectWrapper>
+            <Analysis />
           </UserProtectWrapper>
         } />
       </Routes>
