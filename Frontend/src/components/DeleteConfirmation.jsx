@@ -25,7 +25,7 @@ const DeleteConfirmation = ({ isOpen, onClose, onConfirm, expenseAmount, expense
           <div className='bg-white rounded-xl p-4 mb-6 border-2 border-red-200'>
             <div className='text-center'>
               <p className='text-2xl font-bold text-red-900 mb-1'>
-                ${parseFloat(expenseAmount).toFixed(2)}
+                ₹{parseFloat(expenseAmount).toFixed(2)}
               </p>
               <p className='text-sm text-gray-600 capitalize'>
                 {expenseCategory}
