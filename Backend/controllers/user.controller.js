@@ -64,3 +64,88 @@ module.exports.logoutUser = async(req,res,next) => {
     res.status(200).json({ message: 'Logged out successfully' });
 }
 
+module.exports.updateUsername = async(req,res,next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+    
+    try {
+        const { username } = req.body;
+        const userId = req.user._id;
+        
+        // Check if username is already taken
+        const existingUser = await userModel.findOne({ username, _id: { $ne: userId } });
+        if (existingUser) {
+            return res.status(400).json({ message: 'Username already taken' });
+        }
+        
+        const user = await userModel.findByIdAndUpdate(
+            userId,
+            { username },
+            { new: true }
+        ).select('-password');
+        
+        res.status(200).json({ message: 'Username updated successfully', user });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+    }
+}
+
+module.exports.updateEmail = async(req,res,next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+    
+    try {
+        const { email } = req.body;
+        const userId = req.user._id;
+        
+        // Check if email is already taken
+        const existingUser = await userModel.findOne({ email, _id: { $ne: userId } });
+        if (existingUser) {
+            return res.status(400).json({ message: 'Email already taken' });
+        }
+        
+        const user = await userModel.findByIdAndUpdate(
+            userId,
+            { email },
+            { new: true }
+        ).select('-password');
+        
+        res.status(200).json({ message: 'Email updated successfully', user });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+    }
+}
+
+module.exports.updatePassword = async(req,res,next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+    
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const userId = req.user._id;
+        
+        const user = await userModel.findById(userId).select('+password');
+        
+        // Verify current password
+        const isMatch = await user.comparePassword(currentPassword);
+        if (!isMatch) {
+            return res.status(401).json({ message: 'Current password is incorrect' });
+        }
+        
+        // Hash new password
+        const hashedPassword = await userModel.hashPassword(newPassword);
+        
+        // Update password
+        await userModel.findByIdAndUpdate(userId, { password: hashedPassword });
+        
+        res.status(200).json({ message: 'Password updated successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+    }
+}

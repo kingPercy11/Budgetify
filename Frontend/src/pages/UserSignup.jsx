@@ -10,6 +10,7 @@ const UserSignup = () => {
   const [username, setUsername] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   const navigate = useNavigate()
   const { user, setUser } = useContext(UserDataContext)
@@ -85,15 +86,24 @@ const UserSignup = () => {
 
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
-            <input
-              className='bg-gray-100 rounded-xl px-4 py-3 border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 w-full text-base outline-none transition'
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required 
-              type="password"
-              placeholder='Create a password (min 6 characters)'
-              minLength={6}
-            />
+            <div className="relative">
+              <input
+                className='bg-gray-100 rounded-xl px-4 py-3 pr-12 border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 w-full text-base outline-none transition'
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required 
+                type={showPassword ? "text" : "password"}
+                placeholder='Create a password (min 6 characters)'
+                minLength={6}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                <i className={`${showPassword ? 'ri-eye-off-line' : 'ri-eye-line'} text-xl`}></i>
+              </button>
+            </div>
           </div>
 
           {error && (

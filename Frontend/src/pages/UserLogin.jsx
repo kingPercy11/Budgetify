@@ -9,6 +9,7 @@ const UserLogin = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [check, setCheck] = useState(true)
+    const [showPassword, setShowPassword] = useState(false)
     // const [userData, setUserData] = useState({})
 
     const { user, setUser } = useContext(UserDataContext)
@@ -82,16 +83,35 @@ const UserLogin = () => {
                         />
                     </div>
                     
-                    <div className="mb-6">
+                    <div className="mb-4">
                         <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                        <input
-                            required 
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="bg-gray-100 rounded-xl px-4 py-3 border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 w-full text-base outline-none transition"
-                            type="password"
-                            placeholder="Enter your password" 
-                        />
+                        <div className="relative">
+                            <input
+                                required 
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="bg-gray-100 rounded-xl px-4 py-3 pr-12 border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 w-full text-base outline-none transition"
+                                type={showPassword ? "text" : "password"}
+                                placeholder="Enter your password" 
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                            >
+                                <i className={`${showPassword ? 'ri-eye-off-line' : 'ri-eye-line'} text-xl`}></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div className="mb-6 text-right">
+                        <button
+                            type="button"
+                            onClick={() => alert('Password reset feature coming soon!')}
+                            className="text-sm text-blue-600 hover:text-blue-800 font-medium hover:underline transition-colors"
+                        >
+                            Forgot Password?
+                        </button>
                     </div>
                     
                     {!check && (
