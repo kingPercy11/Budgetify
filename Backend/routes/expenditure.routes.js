@@ -7,12 +7,13 @@ const authMiddleware = require('../middlewares/auth.middleware');
 router.post('/add', authMiddleware.authUser, [
     body('amount').isNumeric().withMessage('Amount must be a number'),
     body('category').notEmpty().withMessage('Category is required'),
-    body('date').isISO8601().toDate().withMessage('Invalid date format')
+    body('date').isISO8601().toDate().withMessage('Invalid date format'),
+    body('type').isIn(['credit', 'debit']).withMessage('Type must be either credit or debit')
 ], async (req, res) => {
     try {
         const { username } = req.user;
-        const { amount, category, date, description } = req.body;
-        const expenditure = await expenditureController.addExpenditure({ username, amount, category, date, description });
+        const { amount, category, date, description, type } = req.body;
+        const expenditure = await expenditureController.addExpenditure({ username, amount, category, date, description, type });
         res.status(201).json(expenditure);
     } catch (error) {
         res.status(400).json({ error: error.message });

@@ -80,10 +80,10 @@ const Analysis = () => {
         <div className="relative z-10 flex-1 flex items-center justify-center px-4">
           <div className='coming-soon text-center max-w-4xl'>
             <i className="ri-bar-chart-box-line text-6xl sm:text-7xl md:text-8xl lg:text-9xl text-blue-200 mb-4 sm:mb-6 block drop-shadow-2xl"></i>
-            <h1 className='text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-blue-900 drop-shadow-2xl mb-3 sm:mb-4 break-words'>
+            <h1 className='text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-blue-900 drop-shadow-2xl mb-3 sm:mb-4 wrap-break-word'>
               Coming Soon
             </h1>
-            <p className='text-lg sm:text-xl md:text-2xl lg:text-3xl font-light text-white/95 drop-shadow-lg break-words'>
+            <p className='text-lg sm:text-xl md:text-2xl lg:text-3xl font-light text-white/95 drop-shadow-lg wrap-break-word'>
               We're working on something amazing!
             </p>
           </div>

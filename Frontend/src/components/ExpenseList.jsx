@@ -147,14 +147,19 @@ const ExpenseList = ({ startDate, endDate, refreshTrigger }) => {
             {expenses.map((expense) => (
               <div 
                 key={expense._id} 
-                className='bg-white rounded-xl p-3 sm:p-4 shadow-md hover:shadow-lg transition-shadow duration-300 border border-blue-200 w-full'
+                className='bg-white rounded-xl p-3 sm:p-4 shadow-md hover:shadow-lg transition-shadow duration-300 border-2 border-blue-200 w-full'
               >
                 <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4'>
                   <div className='flex-1 min-w-0'>
                     <div className='flex flex-wrap items-center gap-2 sm:gap-3 mb-2'>
-                      <span className='text-xl sm:text-2xl font-bold text-blue-900 wrap-break-word'>
-                        {formatAmount(expense.amount)}
-                      </span>
+                      <div className='flex items-center gap-2'>
+                        <div className={`w-3 h-3 rounded-full ${
+                          expense.type === 'credit' ? 'bg-green-600' : 'bg-red-600'
+                        }`} title={expense.type === 'credit' ? 'Credit (Income)' : 'Debit (Expense)'}></div>
+                        <span className='text-xl sm:text-2xl font-bold text-blue-900 wrap-break-word'>
+                          {expense.type === 'credit' ? '+' : '-'}{formatAmount(expense.amount)}
+                        </span>
+                      </div>
                       <span className='px-2 sm:px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold capitalize wrap-break-word'>
                         {expense.category}
                       </span>

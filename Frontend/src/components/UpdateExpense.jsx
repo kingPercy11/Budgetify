@@ -6,6 +6,7 @@ const UpdateExpense = ({ isOpen, onClose, expense, onExpenseUpdated }) => {
   const [category, setCategory] = useState('')
   const [date, setDate] = useState('')
   const [description, setDescription] = useState('')
+  const [type, setType] = useState('debit')
   const [error, setError] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
 
@@ -18,6 +19,7 @@ const UpdateExpense = ({ isOpen, onClose, expense, onExpenseUpdated }) => {
       const formattedDate = new Date(expense.date).toISOString().split('T')[0]
       setDate(formattedDate)
       setDescription(expense.description || '')
+      setType(expense.type || 'debit')
     }
   }, [expense])
 
@@ -27,8 +29,8 @@ const UpdateExpense = ({ isOpen, onClose, expense, onExpenseUpdated }) => {
     setSuccessMessage('')
 
     // Validation
-    if (!amount || !category || !date) {
-      setError('Amount, category, and date are required')
+    if (!amount || !category || !date || !type) {
+      setError('Amount, category, date, and type are required')
       return
     }
 
@@ -40,7 +42,8 @@ const UpdateExpense = ({ isOpen, onClose, expense, onExpenseUpdated }) => {
           amount: parseFloat(amount),
           category,
           date,
-          description
+          description,
+          type
         },
         {
           headers: {
@@ -70,7 +73,7 @@ const UpdateExpense = ({ isOpen, onClose, expense, onExpenseUpdated }) => {
 
   return (
     <div className='fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50'>
-      <div className='bg-linear-to-br from-blue-50 to-blue-100 rounded-3xl shadow-2xl p-8 w-full max-w-md mx-4 relative border border-blue-200'>
+      <div className='bg-linear-to-br from-blue-50 to-blue-100 rounded-3xl shadow-2xl p-8 w-full max-w-md mt-18 mx-4 relative border border-blue-200'>
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -108,6 +111,22 @@ const UpdateExpense = ({ isOpen, onClose, expense, onExpenseUpdated }) => {
               className='w-full px-4 py-3 bg-white border-2 border-blue-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm'
               placeholder='Enter amount'
             />
+          </div>
+
+          {/* Type */}
+          <div className='mb-4'>
+            <label className='block text-sm font-bold text-blue-900 mb-2'>
+              Type <span className='text-red-500'>*</span>
+            </label>
+            <select
+              value={type}
+              onChange={(e) => setType(e.target.value)}
+              required
+              className='w-full px-4 py-3 bg-white border-2 border-blue-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer shadow-sm'
+            >
+              <option value='debit'>Debit</option>
+              <option value='credit'>Credit</option>
+            </select>
           </div>
 
           {/* Category */}
