@@ -5,7 +5,8 @@ const expenditureSchema = new mongoose.Schema({
     amount: { type: Number, required: true },
     category: { type: String, required: true },
     date: { type: Date, required: true },
-    description: { type: String }
+    description: { type: String },
+    type: { type: String, enum: ['credit', 'debit'], required: true }
 }, { timestamps: true });
 
 const expenditureModel = mongoose.model('Expenditure', expenditureSchema);

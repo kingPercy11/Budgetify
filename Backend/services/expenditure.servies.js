@@ -1,7 +1,7 @@
 const expenditureModel = require('../models/expenditure.model');
 
-module.exports.addExpenditure = async ({username, amount, category, date, description}) => {
-    if(!username || !amount || !category || !date){
+module.exports.addExpenditure = async ({username, amount, category, date, description, type}) => {
+    if(!username || !amount || !category || !date || !type){
         throw new Error('Required fields are missing');
     }
     const expenditure = await expenditureModel.create({
@@ -9,7 +9,8 @@ module.exports.addExpenditure = async ({username, amount, category, date, descri
         amount,
         category,
         date,
-        description
+        description,
+        type
     });
     return expenditure;
 }
