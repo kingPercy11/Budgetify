@@ -156,7 +156,9 @@ const ExpenseList = ({ startDate, endDate, refreshTrigger }) => {
                         <div className={`w-3 h-3 rounded-full ${
                           expense.type === 'credit' ? 'bg-green-600' : 'bg-red-600'
                         }`} title={expense.type === 'credit' ? 'Credit (Income)' : 'Debit (Expense)'}></div>
-                        <span className='text-xl sm:text-2xl font-bold text-blue-900 wrap-break-word'>
+                        <span className={`text-xl sm:text-2xl font-bold wrap-break-word ${
+                          expense.type === 'credit' ? 'text-green-600' : 'text-red-600'
+                        }`}>
                           {expense.type === 'credit' ? '+' : '-'}{formatAmount(expense.amount)}
                         </span>
                       </div>

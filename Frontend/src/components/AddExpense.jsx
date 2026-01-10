@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 
 const AddExpense = ({ isOpen, onClose, onExpenseAdded }) => {
@@ -10,6 +10,22 @@ const AddExpense = ({ isOpen, onClose, onExpenseAdded }) => {
   const [error, setError] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        onClose()
+      }
+    }
+
+    if (isOpen) {
+      window.addEventListener('keydown', handleKeyDown)
+    }
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [isOpen, onClose])
+
   const handleAddExpense = async (e) => {
     e.preventDefault()
     setError('')
@@ -18,6 +34,16 @@ const AddExpense = ({ isOpen, onClose, onExpenseAdded }) => {
     // Validation
     if (!amount || !category || !date || !type) {
       setError('Amount, category, date, and type are required')
+      return
+    }
+
+    // Check if date is in the future
+    const selectedDate = new Date(date)
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    
+    if (selectedDate > today) {
+      setError('Cannot add expenses for future dates')
       return
     }
 
@@ -155,6 +181,7 @@ const AddExpense = ({ isOpen, onClose, onExpenseAdded }) => {
               type='date'
               value={date}
               onChange={(e) => setDate(e.target.value)}
+              max={new Date().toISOString().split('T')[0]}
               required
               className='w-full px-4 py-3 bg-white border-2 border-blue-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm'
             />

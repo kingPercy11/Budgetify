@@ -1,6 +1,24 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 const DeleteConfirmation = ({ isOpen, onClose, onConfirm, expenseAmount, expenseCategory }) => {
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Enter') {
+        onConfirm()
+      } else if (e.key === 'Escape') {
+        onClose()
+      }
+    }
+
+    if (isOpen) {
+      window.addEventListener('keydown', handleKeyDown)
+    }
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [isOpen, onConfirm, onClose])
+
   if (!isOpen) return null
 
   return (

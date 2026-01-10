@@ -23,6 +23,23 @@ const UpdateExpense = ({ isOpen, onClose, expense, onExpenseUpdated }) => {
     }
   }, [expense])
 
+  // Handle Escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        onClose()
+      }
+    }
+
+    if (isOpen) {
+      window.addEventListener('keydown', handleKeyDown)
+    }
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [isOpen, onClose])
+
   const handleUpdateExpense = async (e) => {
     e.preventDefault()
     setError('')
@@ -31,6 +48,16 @@ const UpdateExpense = ({ isOpen, onClose, expense, onExpenseUpdated }) => {
     // Validation
     if (!amount || !category || !date || !type) {
       setError('Amount, category, date, and type are required')
+      return
+    }
+
+    // Check if date is in the future
+    const selectedDate = new Date(date)
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    
+    if (selectedDate > today) {
+      setError('Cannot update expenses to future dates')
       return
     }
 
@@ -161,6 +188,7 @@ const UpdateExpense = ({ isOpen, onClose, expense, onExpenseUpdated }) => {
               type='date'
               value={date}
               onChange={(e) => setDate(e.target.value)}
+              max={new Date().toISOString().split('T')[0]}
               required
               className='w-full px-4 py-3 bg-white border-2 border-blue-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm'
             />
