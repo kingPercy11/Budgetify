@@ -4,6 +4,8 @@ import Start from './pages/Start'
 import UserLogin from './pages/UserLogin'
 import UserLogout from './pages/UserLogout'
 import UserSignup from './pages/UserSignup'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
 import UserProtectWrapper from './pages/UserProtectWrapper'
 import Home from './pages/Home'
 import Expense from './pages/Expense'
@@ -18,6 +20,8 @@ const App = () => {
         <Route path='/' element={<Start/>}/>
         <Route path='/login' element={<UserLogin />} />
         <Route path="/signup" element={<UserSignup />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path='/logout' element={
           <UserProtectWrapper>
             <UserLogout />
