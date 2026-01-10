@@ -28,4 +28,13 @@ router.put('/update-password', authMiddleware.authUser, [
     body('newPassword').isLength({ min: 6 }).withMessage('New password must be at least 6 characters long')
 ], userController.updatePassword)
 
+router.post('/forgot-password', [
+    body('email').isEmail().withMessage('Invalid Email')
+], userController.forgotPassword)
+
+router.post('/reset-password', [
+    body('token').notEmpty().withMessage('Token is required'),
+    body('newPassword').isLength({ min: 6 }).withMessage('New password must be at least 6 characters long')
+], userController.resetPassword)
+
 module.exports = router;

@@ -1,6 +1,7 @@
 const blacklistTokenModel = require('../models/blacklistToken.model');
 const userModel = require('../models/user.model'); 
 const userService = require('../services/user.services');
+const emailService = require('../services/email.service');
 const { validationResult } = require('express-validator');
 const blackListTokenModel = require('../models/blacklistToken.model');
 
@@ -147,6 +148,62 @@ module.exports.updatePassword = async(req,res,next) => {
         res.status(200).json({ message: 'Password updated successfully' });
     } catch (error) {
         res.status(500).json({ message: 'Server error' });
+    }
+}
+
+module.exports.forgotPassword = async(req,res,next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+    
+    try {
+        const { email } = req.body;
+        
+        // Generate reset token
+        const resetToken = await userService.generatePasswordResetToken(email);
+        
+        // Send email with reset token
+        await emailService.sendPasswordResetEmail(email, resetToken);
+        
+        res.status(200).json({ 
+            message: 'Password reset link has been sent to your email' 
+        });
+    } catch (error) {
+        console.error('Forgot password error:', error);
+        if (error.message === 'User not found') {
+            // Don't reveal if user exists or not for security
+            return res.status(200).json({ 
+                message: 'If an account exists with this email, a password reset link will be sent' 
+            });
+        }
+        res.status(500).json({ message: 'Error sending reset email. Please try again later.', error: error.message });
+    }
+}
+
+module.exports.resetPassword = async(req,res,next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+    
+    try {
+        const { token, newPassword } = req.body;
+        
+        // Reset password
+        const user = await userService.resetPassword(token, newPassword);
+        
+        // Send confirmation email
+        await emailService.sendPasswordResetConfirmation(user.email);
+        
+        res.status(200).json({ 
+            message: 'Password has been reset successfully. You can now login with your new password.' 
+        });
+    } catch (error) {
+        if (error.message === 'Invalid or expired token') {
+            return res.status(400).json({ message: 'Invalid or expired reset token' });
+        }
+        res.status(500).json({ message: 'Error resetting password. Please try again later.' });
     }
 }
 
