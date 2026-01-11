@@ -105,13 +105,12 @@ const UserLogin = () => {
                     </div>
                     
                     <div className="mb-6 text-right">
-                        <button
-                            type="button"
-                            onClick={() => alert('Password reset feature coming soon!')}
+                        <Link
+                            to="/forgot-password"
                             className="text-sm text-blue-600 hover:text-blue-800 font-medium hover:underline transition-colors"
                         >
                             Forgot Password?
-                        </button>
+                        </Link>
                     </div>
                     
                     {!check && (
