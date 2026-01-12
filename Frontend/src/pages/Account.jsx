@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import gsap from 'gsap'
 import axios from 'axios'
 import { UserDataContext } from '../context/UserContext'
+import { format } from 'date-fns'
 
 const Account = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -23,6 +24,15 @@ const Account = () => {
   
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
+  const [expenses, setExpenses] = useState([])
+  const [stats, setStats] = useState({
+    totalTransactions: 0,
+    totalIncome: 0,
+    totalExpenses: 0,
+    netBalance: 0,
+    savingsRate: 0,
+    avgDailySpend: 0
+  })
 
   useEffect(() => {
     gsap.fromTo('.header-logo', 
@@ -39,7 +49,64 @@ const Account = () => {
       { scale: 0, opacity: 0 },
       { scale: 1, opacity: 1, duration: 1, ease: 'back.out(1.7)', delay: 0.3 }
     )
-  }, [])
+
+    gsap.fromTo('.stats-card', 
+      { y: 50, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', delay: 0.5, stagger: 0.1 }
+    )
+
+    if (user?.username) {
+      fetchExpenses()
+    }
+  }, [user?.username])
+
+  const fetchExpenses = async () => {
+    try {
+      const token = localStorage.getItem('token')
+      const response = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/expenditures/user/${user.username}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      
+      const allExpenses = response.data.map(exp => ({
+        ...exp,
+        type: exp.type || 'debit'
+      }))
+      
+      setExpenses(allExpenses)
+      calculateStats(allExpenses)
+    } catch (err) {
+      console.error('Failed to fetch expenses:', err)
+    }
+  }
+
+  const calculateStats = (expenseData) => {
+    const now = new Date()
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+    
+    const recentExpenses = expenseData.filter(e => new Date(e.date) >= thirtyDaysAgo)
+    
+    const totalIncome = recentExpenses
+      .filter(e => e.type === 'credit')
+      .reduce((sum, e) => sum + e.amount, 0)
+    
+    const totalExpenses = recentExpenses
+      .filter(e => e.type === 'debit')
+      .reduce((sum, e) => sum + e.amount, 0)
+    
+    const netBalance = totalIncome - totalExpenses
+    const savingsRate = totalIncome > 0 ? ((netBalance / totalIncome) * 100) : 0
+    const avgDailySpend = totalExpenses / 30
+
+    setStats({
+      totalTransactions: recentExpenses.length,
+      totalIncome,
+      totalExpenses,
+      netBalance,
+      savingsRate,
+      avgDailySpend
+    })
+  }
   
   const handleUpdateUsername = async () => {
     try {
@@ -105,9 +172,8 @@ const Account = () => {
   }
 
   return (
-    <div>
-      <div className="min-h-screen bg-cover bg-center bg-[url('/Home.png')] flex flex-col relative">
-        <div className="absolute inset-0 bg-linear-to-b from-blue-900/40 via-blue-600/30 to-blue-900/40 backdrop-blur-sm"></div>
+    <div className="min-h-screen bg-cover bg-center bg-[url('/Home.png')] bg-fixed">
+      <div className="fixed inset-0 bg-linear-to-b from-blue-900/50 via-blue-600/40 to-blue-900/50 backdrop-blur-md"></div>
         
         {/* Header */}
         <div className="fixed top-0 left-0 w-full h-20 z-50 bg-black/40 backdrop-blur-md shadow-lg">
@@ -159,23 +225,36 @@ const Account = () => {
         </div>
         
         {/* Content */}
-        <div className="relative z-10 pt-32 px-4 pb-16 flex items-center justify-center min-h-screen">
-          <div className='profile-card w-full max-w-3xl bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl p-8 border border-blue-200'>
+        <div className="relative z-10 pt-24 px-4 pb-16">
+          <div className='max-w-7xl mx-auto'>
+            {/* Header */}
             <div className='text-center mb-8'>
-              <i className="ri-account-circle-fill text-7xl text-blue-600 mb-4 block drop-shadow-lg"></i>
-              <h1 className='text-4xl font-bold text-blue-900 drop-shadow-sm'>
+              <i className="ri-account-circle-fill text-7xl text-white drop-shadow-2xl mb-4 block"></i>
+              <h1 className='text-5xl font-bold text-white drop-shadow-lg mb-2'>
                 My Profile
               </h1>
+              <p className='text-blue-100 text-lg drop-shadow'>Welcome back, {user.username}!</p>
             </div>
+
+            {/* Profile Information Section */}
+            <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 items-start'>
+              {/* Account Details Card */}
+              <div className='profile-card bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl p-8 border border-blue-200 h-fit'>
+                <h2 className='text-3xl font-bold text-blue-900 mb-6 flex items-center gap-2'>
+                  <i className="ri-user-settings-line"></i>
+                  Account Details
+                </h2>
             
             {message && (
-              <div className='bg-green-50 border border-green-200 text-green-700 p-4 rounded-xl mb-6'>
+              <div className='bg-green-50 border border-green-200 text-green-700 p-4 rounded-xl mb-6 flex items-center gap-2'>
+                <i className="ri-checkbox-circle-line text-xl"></i>
                 <p className="text-sm font-semibold">{message}</p>
               </div>
             )}
             
             {error && (
-              <div className='bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl mb-6'>
+              <div className='bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl mb-6 flex items-center gap-2'>
+                <i className="ri-error-warning-line text-xl"></i>
                 <p className="text-sm font-semibold">{error}</p>
               </div>
             )}
@@ -358,9 +437,96 @@ const Account = () => {
               )}
             </div>
           </div>
+
+          {/* Financial Overview Card */}
+          <div className='profile-card bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl p-8 border border-blue-200 h-fit'>
+            <h2 className='text-3xl font-bold text-blue-900 mb-6 flex items-center gap-2'>
+              <i className="ri-line-chart-line"></i>
+              Financial Overview
+            </h2>
+            <p className='text-sm text-gray-600 mb-6'>Last 30 Days Summary</p>
+            
+            <div className='space-y-4'>
+              <div className="bg-linear-to-r from-green-50 to-green-100 rounded-xl p-5 border-l-4 border-green-500">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-gray-600 text-sm font-semibold mb-1">Total Income</p>
+                    <p className="text-3xl font-bold text-green-600">₹{stats.totalIncome.toFixed(0)}</p>
+                  </div>
+                  <i className="ri-arrow-down-circle-fill text-5xl text-green-500"></i>
+                </div>
+              </div>
+
+              <div className="bg-linear-to-r from-red-50 to-red-100 rounded-xl p-5 border-l-4 border-red-500">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-gray-600 text-sm font-semibold mb-1">Total Expenses</p>
+                    <p className="text-3xl font-bold text-red-600">₹{stats.totalExpenses.toFixed(0)}</p>
+                  </div>
+                  <i className="ri-arrow-up-circle-fill text-5xl text-red-500"></i>
+                </div>
+              </div>
+
+              <div className={`bg-linear-to-r rounded-xl p-5 border-l-4 ${
+                stats.netBalance >= 0 
+                  ? 'from-blue-50 to-blue-100 border-blue-500' 
+                  : 'from-orange-50 to-orange-100 border-orange-500'
+              }`}>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-gray-600 text-sm font-semibold mb-1">Net Balance</p>
+                    <p className={`text-3xl font-bold ${
+                      stats.netBalance >= 0 ? 'text-blue-600' : 'text-orange-600'
+                    }`}>
+                      ₹{stats.netBalance.toFixed(0)}
+                    </p>
+                  </div>
+                  <i className={`ri-wallet-fill text-5xl ${
+                    stats.netBalance >= 0 ? 'text-blue-500' : 'text-orange-500'
+                  }`}></i>
+                </div>
+              </div>
+
+              <div className="bg-linear-to-r from-purple-50 to-purple-100 rounded-xl p-5 border-l-4 border-purple-500">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-gray-600 text-sm font-semibold mb-1">Savings Rate</p>
+                    <p className={`text-3xl font-bold ${
+                      stats.savingsRate >= 20 ? 'text-green-600' : stats.savingsRate >= 0 ? 'text-yellow-600' : 'text-red-600'
+                    }`}>
+                      {stats.savingsRate.toFixed(1)}%
+                    </p>
+                  </div>
+                  <i className="ri-percent-line text-5xl text-purple-500"></i>
+                </div>
+              </div>
+
+              <div className="bg-linear-to-r from-indigo-50 to-indigo-100 rounded-xl p-5 border-l-4 border-indigo-500">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-gray-600 text-sm font-semibold mb-1">Avg Daily Spend</p>
+                    <p className="text-3xl font-bold text-indigo-600">₹{stats.avgDailySpend.toFixed(0)}</p>
+                  </div>
+                  <i className="ri-calendar-check-fill text-5xl text-indigo-500"></i>
+                </div>
+              </div>
+
+              <div className="bg-linear-to-r from-pink-50 to-pink-100 rounded-xl p-5 border-l-4 border-pink-500">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-gray-600 text-sm font-semibold mb-1">Total Transactions</p>
+                    <p className="text-3xl font-bold text-pink-600">{stats.totalTransactions}</p>
+                  </div>
+                  <i className="ri-exchange-line text-5xl text-pink-500"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+          </div>
         </div>
       </div>
-    </div>
+
   )
 }
 
