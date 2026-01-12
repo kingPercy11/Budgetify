@@ -173,7 +173,7 @@ const Account = () => {
 
   return (
     <div className="min-h-screen bg-cover bg-center bg-[url('/Home.png')] bg-fixed">
-      <div className="fixed inset-0 bg-gradient-to-b from-blue-900/50 via-blue-600/40 to-blue-900/50 backdrop-blur-md"></div>
+      <div className="fixed inset-0 bg-linear-to-b from-blue-900/50 via-blue-600/40 to-blue-900/50 backdrop-blur-md"></div>
         
         {/* Header */}
         <div className="fixed top-0 left-0 w-full h-20 z-50 bg-black/40 backdrop-blur-md shadow-lg">
@@ -447,7 +447,7 @@ const Account = () => {
             <p className='text-sm text-gray-600 mb-6'>Last 30 Days Summary</p>
             
             <div className='space-y-4'>
-              <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-xl p-5 border-l-4 border-green-500">
+              <div className="bg-linear-to-r from-green-50 to-green-100 rounded-xl p-5 border-l-4 border-green-500">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-600 text-sm font-semibold mb-1">Total Income</p>
@@ -457,7 +457,7 @@ const Account = () => {
                 </div>
               </div>
 
-              <div className="bg-gradient-to-r from-red-50 to-red-100 rounded-xl p-5 border-l-4 border-red-500">
+              <div className="bg-linear-to-r from-red-50 to-red-100 rounded-xl p-5 border-l-4 border-red-500">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-600 text-sm font-semibold mb-1">Total Expenses</p>
@@ -467,7 +467,7 @@ const Account = () => {
                 </div>
               </div>
 
-              <div className={`bg-gradient-to-r rounded-xl p-5 border-l-4 ${
+              <div className={`bg-linear-to-r rounded-xl p-5 border-l-4 ${
                 stats.netBalance >= 0 
                   ? 'from-blue-50 to-blue-100 border-blue-500' 
                   : 'from-orange-50 to-orange-100 border-orange-500'
@@ -487,7 +487,7 @@ const Account = () => {
                 </div>
               </div>
 
-              <div className="bg-gradient-to-r from-purple-50 to-purple-100 rounded-xl p-5 border-l-4 border-purple-500">
+              <div className="bg-linear-to-r from-purple-50 to-purple-100 rounded-xl p-5 border-l-4 border-purple-500">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-600 text-sm font-semibold mb-1">Savings Rate</p>
@@ -501,7 +501,7 @@ const Account = () => {
                 </div>
               </div>
 
-              <div className="bg-gradient-to-r from-indigo-50 to-indigo-100 rounded-xl p-5 border-l-4 border-indigo-500">
+              <div className="bg-linear-to-r from-indigo-50 to-indigo-100 rounded-xl p-5 border-l-4 border-indigo-500">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-600 text-sm font-semibold mb-1">Avg Daily Spend</p>
@@ -511,7 +511,7 @@ const Account = () => {
                 </div>
               </div>
 
-              <div className="bg-gradient-to-r from-pink-50 to-pink-100 rounded-xl p-5 border-l-4 border-pink-500">
+              <div className="bg-linear-to-r from-pink-50 to-pink-100 rounded-xl p-5 border-l-4 border-pink-500">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-600 text-sm font-semibold mb-1">Total Transactions</p>

@@ -38,7 +38,7 @@ const AddExpense = ({ isOpen, onClose, onExpenseAdded }) => {
     }
 
     // Check if date is in the future
-    const selectedDate = new Date(date)
+    const selectedDate = new Date(date + 'T00:00:00')
     const today = new Date()
     today.setHours(0, 0, 0, 0)
     
@@ -181,7 +181,7 @@ const AddExpense = ({ isOpen, onClose, onExpenseAdded }) => {
               type='date'
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              max={new Date().toISOString().split('T')[0]}
+              max={new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0]}
               required
               className='w-full px-4 py-3 bg-white border-2 border-blue-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm'
             />
