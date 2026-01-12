@@ -93,6 +93,34 @@ module.exports.updateUsername = async(req,res,next) => {
     }
 }
 
+module.exports.updateProfile = async(req,res,next) => {
+    try {
+        const { age, state, country, phoneNumber } = req.body;
+        const userId = req.user._id;
+        
+        // Validate required field
+        if (!phoneNumber || phoneNumber.trim() === '') {
+            return res.status(400).json({ message: 'Phone number is required' });
+        }
+        
+        const updateData = {};
+        if (age !== undefined) updateData.age = age;
+        if (state !== undefined) updateData.state = state;
+        if (country !== undefined) updateData.country = country;
+        if (phoneNumber !== undefined) updateData.phoneNumber = phoneNumber;
+        
+        const user = await userModel.findByIdAndUpdate(
+            userId,
+            updateData,
+            { new: true }
+        ).select('-password');
+        
+        res.status(200).json({ message: 'Profile updated successfully', user });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+    }
+}
+
 module.exports.updateEmail = async(req,res,next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

@@ -23,6 +23,7 @@ router.put('/update-username', authMiddleware.authUser, [
 router.put('/update-email', authMiddleware.authUser, [
     body('email').isEmail().withMessage('Invalid Email')
 ], userController.updateEmail)
+router.put('/update-profile', authMiddleware.authUser, userController.updateProfile)
 router.put('/update-password', authMiddleware.authUser, [
     body('currentPassword').isLength({ min: 6 }).withMessage('Current password must be at least 6 characters long'),
     body('newPassword').isLength({ min: 6 }).withMessage('New password must be at least 6 characters long')
