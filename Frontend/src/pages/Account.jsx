@@ -4,6 +4,30 @@ import gsap from 'gsap'
 import axios from 'axios'
 import { UserDataContext } from '../context/UserContext'
 import { format } from 'date-fns'
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+} from 'chart.js'
+import { Line } from 'react-chartjs-2'
+
+// Register ChartJS components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+)
 
 const Account = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -11,12 +35,52 @@ const Account = () => {
   const [isEditingUsername, setIsEditingUsername] = useState(false)
   const [isEditingEmail, setIsEditingEmail] = useState(false)
   const [isEditingPassword, setIsEditingPassword] = useState(false)
+  const [isEditingProfile, setIsEditingProfile] = useState(false)
   
   const [newUsername, setNewUsername] = useState('')
   const [newEmail, setNewEmail] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [currentPassword, setCurrentPassword] = useState('')
+  
+  const [age, setAge] = useState('')
+  const [state, setState] = useState('')
+  const [country, setCountry] = useState('')
+  const [phoneNumber, setPhoneNumber] = useState('')
+  
+  // Country list with flags
+  const countries = [
+    { code: 'IN', name: 'India', flag: '🇮🇳' },
+    { code: 'US', name: 'United States', flag: '🇺🇸' },
+    { code: 'GB', name: 'United Kingdom', flag: '🇬🇧' },
+    { code: 'CA', name: 'Canada', flag: '🇨🇦' },
+    { code: 'AU', name: 'Australia', flag: '🇦🇺' },
+    { code: 'DE', name: 'Germany', flag: '🇩🇪' },
+    { code: 'FR', name: 'France', flag: '🇫🇷' },
+    { code: 'JP', name: 'Japan', flag: '🇯🇵' },
+    { code: 'CN', name: 'China', flag: '🇨🇳' },
+    { code: 'BR', name: 'Brazil', flag: '🇧🇷' },
+    { code: 'MX', name: 'Mexico', flag: '🇲🇽' },
+    { code: 'IT', name: 'Italy', flag: '🇮🇹' },
+    { code: 'ES', name: 'Spain', flag: '🇪🇸' },
+    { code: 'KR', name: 'South Korea', flag: '🇰🇷' },
+    { code: 'RU', name: 'Russia', flag: '🇷🇺' },
+    { code: 'SG', name: 'Singapore', flag: '🇸🇬' },
+    { code: 'AE', name: 'UAE', flag: '🇦🇪' },
+    { code: 'ZA', name: 'South Africa', flag: '🇿🇦' },
+    { code: 'NL', name: 'Netherlands', flag: '🇳🇱' },
+    { code: 'SE', name: 'Sweden', flag: '🇸🇪' },
+    { code: 'CH', name: 'Switzerland', flag: '🇨🇭' },
+    { code: 'PL', name: 'Poland', flag: '🇵🇱' },
+    { code: 'BE', name: 'Belgium', flag: '🇧🇪' },
+    { code: 'NO', name: 'Norway', flag: '🇳🇴' },
+    { code: 'AT', name: 'Austria', flag: '🇦🇹' },
+    { code: 'DK', name: 'Denmark', flag: '🇩🇰' },
+    { code: 'FI', name: 'Finland', flag: '🇫🇮' },
+    { code: 'IE', name: 'Ireland', flag: '🇮🇪' },
+    { code: 'NZ', name: 'New Zealand', flag: '🇳🇿' },
+    { code: 'PT', name: 'Portugal', flag: '🇵🇹' }
+  ]
   
   const [showCurrentPassword, setShowCurrentPassword] = useState(false)
   const [showNewPassword, setShowNewPassword] = useState(false)
@@ -107,6 +171,35 @@ const Account = () => {
       avgDailySpend
     })
   }
+
+  const getDailyBreakdown = () => {
+    const dailyData = {}
+    const now = new Date()
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+    
+    const recentExpenses = expenses.filter(e => new Date(e.date) >= thirtyDaysAgo)
+    const sortedExpenses = [...recentExpenses].sort((a, b) => new Date(a.date) - new Date(b.date))
+
+    sortedExpenses.forEach(expense => {
+      const day = format(new Date(expense.date), 'MMM dd')
+      if (!dailyData[day]) {
+        dailyData[day] = { income: 0, expenses: 0 }
+      }
+      
+      if (expense.type === 'credit') {
+        dailyData[day].income += expense.amount
+      } else {
+        dailyData[day].expenses += expense.amount
+      }
+    })
+
+    const labels = Object.keys(dailyData)
+    return {
+      labels,
+      income: labels.map(day => dailyData[day].income),
+      expenses: labels.map(day => dailyData[day].expenses)
+    }
+  }
   
   const handleUpdateUsername = async () => {
     try {
@@ -167,6 +260,34 @@ const Account = () => {
       setTimeout(() => setMessage(''), 3000)
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to update password')
+      setTimeout(() => setError(''), 3000)
+    }
+  }
+
+  const handleUpdateProfile = async () => {
+    if (!phoneNumber || phoneNumber.trim() === '') {
+      setError('Phone number is required')
+      setTimeout(() => setError(''), 3000)
+      return
+    }
+    try {
+      const token = localStorage.getItem('token')
+      const response = await axios.put(
+        `${import.meta.env.VITE_BASE_URL}/users/update-profile`,
+        { 
+          age: age ? parseInt(age) : undefined,
+          state,
+          country,
+          phoneNumber
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      setUser(response.data.user)
+      setMessage('Profile updated successfully!')
+      setIsEditingProfile(false)
+      setTimeout(() => setMessage(''), 3000)
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to update profile')
       setTimeout(() => setError(''), 3000)
     }
   }
@@ -436,6 +557,122 @@ const Account = () => {
                 </div>
               )}
             </div>
+            
+            {/* Profile Details Section */}
+            <div className='bg-blue-50 rounded-2xl p-6 border border-blue-200 mt-4'>
+              <div className='flex items-center justify-between mb-2'>
+                <label className='text-sm font-semibold text-gray-600 uppercase tracking-wide'>Profile Details</label>
+                {!isEditingProfile && (
+                  <button 
+                    onClick={() => {
+                      setIsEditingProfile(true)
+                      setAge(user.age || '')
+                      setState(user.state || '')
+                      setCountry(user.country || '')
+                      setPhoneNumber(user.phoneNumber || '')
+                    }}
+                    className='text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center gap-1'
+                  >
+                    <i className="ri-edit-line"></i> Edit
+                  </button>
+                )}
+              </div>
+              {!isEditingProfile ? (
+                <div className='space-y-3'>
+                  <div>
+                    <p className='text-xs text-gray-500 mb-1'>Age</p>
+                    <p className='text-lg font-bold text-gray-800'>{user.age || 'Not set'}</p>
+                  </div>
+                  <div>
+                    <p className='text-xs text-gray-500 mb-1'>State</p>
+                    <p className='text-lg font-bold text-gray-800'>{user.state || 'Not set'}</p>
+                  </div>
+                  <div>
+                    <p className='text-xs text-gray-500 mb-1'>Country</p>
+                    <p className='text-lg font-bold text-gray-800'>
+                      {user.country ? `${countries.find(c => c.name === user.country)?.flag || ''} ${user.country}` : 'Not set'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-xs text-gray-500 mb-1'>Phone Number</p>
+                    <p className='text-lg font-bold text-gray-800'>{user.phoneNumber || 'Not set'}</p>
+                  </div>
+                </div>
+              ) : (
+                <div className='space-y-3'>
+                  <div>
+                    <label className='block text-xs text-gray-600 mb-1 font-semibold'>Age</label>
+                    <input
+                      type="number"
+                      value={age}
+                      onChange={(e) => setAge(e.target.value)}
+                      placeholder="Enter your age"
+                      min="1"
+                      max="120"
+                      className='w-full px-4 py-3 border border-blue-300 rounded-xl focus:ring-2 focus:ring-blue-400 outline-none'
+                    />
+                  </div>
+                  <div>
+                    <label className='block text-xs text-gray-600 mb-1 font-semibold'>State</label>
+                    <input
+                      type="text"
+                      value={state}
+                      onChange={(e) => setState(e.target.value)}
+                      placeholder="Enter your state"
+                      className='w-full px-4 py-3 border border-blue-300 rounded-xl focus:ring-2 focus:ring-blue-400 outline-none'
+                    />
+                  </div>
+                  <div>
+                    <label className='block text-xs text-gray-600 mb-1 font-semibold'>Country</label>
+                    <select
+                      value={country}
+                      onChange={(e) => setCountry(e.target.value)}
+                      className='w-full px-4 py-3 border border-blue-300 rounded-xl focus:ring-2 focus:ring-blue-400 outline-none bg-white'
+                    >
+                      <option value="">Select your country</option>
+                      {countries.map(c => (
+                        <option key={c.code} value={c.name}>
+                          {c.flag} {c.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className='block text-xs text-gray-600 mb-1 font-semibold'>
+                      Phone Number <span className='text-red-600'>*</span>
+                    </label>
+                    <input
+                      type="tel"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      placeholder="Enter your phone number"
+                      required
+                      className='w-full px-4 py-3 border border-blue-300 rounded-xl focus:ring-2 focus:ring-blue-400 outline-none'
+                    />
+                  </div>
+                  <div className='flex gap-2 pt-2'>
+                    <button 
+                      onClick={handleUpdateProfile}
+                      className='flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition'
+                    >
+                      Save
+                    </button>
+                    <button 
+                      onClick={() => {
+                        setIsEditingProfile(false)
+                        setAge('')
+                        setCity('')
+                        setCountry('')
+                        setPhoneNumber('')
+                      }}
+                      className='flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg transition'
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Financial Overview Card */}
@@ -519,6 +756,62 @@ const Account = () => {
                   </div>
                   <i className="ri-exchange-line text-5xl text-pink-500"></i>
                 </div>
+              </div>
+            </div>
+
+            {/* Day-to-Day Chart */}
+            <div className='bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl p-6 border border-blue-200 mt-6'>
+              <h3 className='text-xl font-bold text-blue-900 mb-4 flex items-center gap-2'>
+                <i className="ri-line-chart-line"></i>
+                Day-to-Day Activity (Last 30 Days)
+              </h3>
+              <div className='h-64'>
+                {expenses.length > 0 ? (
+                  <Line 
+                    data={{
+                      labels: getDailyBreakdown().labels,
+                      datasets: [
+                        {
+                          label: 'Daily Income',
+                          data: getDailyBreakdown().income,
+                          borderColor: 'rgb(34, 197, 94)',
+                          backgroundColor: 'rgba(34, 197, 94, 0.2)',
+                          tension: 0.3,
+                          fill: true,
+                          pointRadius: 3,
+                          pointHoverRadius: 5
+                        },
+                        {
+                          label: 'Daily Expenses',
+                          data: getDailyBreakdown().expenses,
+                          borderColor: 'rgb(239, 68, 68)',
+                          backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                          tension: 0.3,
+                          fill: true,
+                          pointRadius: 3,
+                          pointHoverRadius: 5
+                        }
+                      ]
+                    }}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: {
+                          position: 'bottom',
+                          labels: { color: '#1e40af', font: { size: 11 } }
+                        }
+                      },
+                      scales: {
+                        y: {
+                          beginAtZero: true
+                        }
+                      }
+                    }}
+                  />
+                ) : (
+                  <p className='text-center text-gray-500 pt-24'>No data available</p>
+                )}
               </div>
             </div>
           </div>

@@ -6,6 +6,10 @@ const userSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: true, minlength: 3 },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    age: { type: Number },
+    state: { type: String },
+    country: { type: String },
+    phoneNumber: { type: String },
     resetPasswordToken: { type: String },
     resetPasswordExpires: { type: Date }
 });
