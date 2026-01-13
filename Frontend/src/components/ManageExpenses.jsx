@@ -15,6 +15,14 @@ const ManageExpenses = () => {
     setRefreshTrigger(prev => prev + 1)
   }
 
+  // Helper function to format date in local timezone (YYYY-MM-DD)
+  const formatLocalDate = (date) => {
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
+
   // Calculate date ranges based on selected period
   const getDateRange = () => {
     const today = new Date()
@@ -23,31 +31,31 @@ const ManageExpenses = () => {
 
     switch (filterPeriod) {
       case 'current':
-        start = today.toISOString().split('T')[0]
-        end = today.toISOString().split('T')[0]
+        start = formatLocalDate(today)
+        end = formatLocalDate(today)
         break
       case 'previous':
         const yesterday = new Date(today)
         yesterday.setDate(yesterday.getDate() - 1)
-        start = yesterday.toISOString().split('T')[0]
-        end = yesterday.toISOString().split('T')[0]
+        start = formatLocalDate(yesterday)
+        end = formatLocalDate(yesterday)
         break
       case 'currMonth':
         const firstDay = new Date(today.getFullYear(), today.getMonth(), 1)
-        start = firstDay.toISOString().split('T')[0]
-        end = today.toISOString().split('T')[0]
+        start = formatLocalDate(firstDay)
+        end = formatLocalDate(today)
         break
       case 'prevMonth':
         const prevMonthFirst = new Date(today.getFullYear(), today.getMonth() - 1, 1)
         const prevMonthLast = new Date(today.getFullYear(), today.getMonth(), 0)
-        start = prevMonthFirst.toISOString().split('T')[0]
-        end = prevMonthLast.toISOString().split('T')[0]
+        start = formatLocalDate(prevMonthFirst)
+        end = formatLocalDate(prevMonthLast)
         break
       case 'currQuarter':
         const quarter = Math.floor(today.getMonth() / 3)
         const quarterFirst = new Date(today.getFullYear(), quarter * 3, 1)
-        start = quarterFirst.toISOString().split('T')[0]
-        end = today.toISOString().split('T')[0]
+        start = formatLocalDate(quarterFirst)
+        end = formatLocalDate(today)
         break
       case 'custom':
         start = startDate

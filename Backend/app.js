@@ -8,10 +8,14 @@ const connectToDb = require('./db/db');
 const userRoutes = require('./routes/user.routes');
 const expenditureRoutes = require('./routes/expenditure.routes');
 const limitRoutes = require('./routes/limit.routes');
+const telegramBot = require('./services/telegram-bot.service');
 
 const app = express();
 
 connectToDb();
+
+// Initialize Telegram Bot
+telegramBot.initialize();
 
 // Middleware
 app.use(cors());

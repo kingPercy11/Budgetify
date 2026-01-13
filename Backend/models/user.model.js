@@ -10,6 +10,9 @@ const userSchema = new mongoose.Schema({
     state: { type: String },
     country: { type: String },
     phoneNumber: { type: String },
+    telegramChatId: { type: String },
+    enableEmailAlerts: { type: Boolean, default: true },
+    enableTelegramAlerts: { type: Boolean, default: false },
     resetPasswordToken: { type: String },
     resetPasswordExpires: { type: Date }
 });
