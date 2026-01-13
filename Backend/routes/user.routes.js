@@ -38,4 +38,6 @@ router.post('/reset-password', [
     body('newPassword').isLength({ min: 6 }).withMessage('New password must be at least 6 characters long')
 ], userController.resetPassword)
 
+router.put('/notification-settings', authMiddleware.authUser, userController.updateNotificationSettings)
+
 module.exports = router;

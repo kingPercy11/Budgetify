@@ -95,7 +95,7 @@ module.exports.updateUsername = async(req,res,next) => {
 
 module.exports.updateProfile = async(req,res,next) => {
     try {
-        const { age, state, country, phoneNumber } = req.body;
+        const { age, state, country, phoneNumber, telegramChatId, enableEmailAlerts, enableTelegramAlerts } = req.body;
         const userId = req.user._id;
         
         // Validate required field
@@ -108,6 +108,9 @@ module.exports.updateProfile = async(req,res,next) => {
         if (state !== undefined) updateData.state = state;
         if (country !== undefined) updateData.country = country;
         if (phoneNumber !== undefined) updateData.phoneNumber = phoneNumber;
+        if (telegramChatId !== undefined) updateData.telegramChatId = telegramChatId;
+        if (enableEmailAlerts !== undefined) updateData.enableEmailAlerts = enableEmailAlerts;
+        if (enableTelegramAlerts !== undefined) updateData.enableTelegramAlerts = enableTelegramAlerts;
         
         const user = await userModel.findByIdAndUpdate(
             userId,
@@ -235,3 +238,25 @@ module.exports.resetPassword = async(req,res,next) => {
     }
 }
 
+module.exports.updateNotificationSettings = async(req,res,next) => {
+    try {
+        const { telegramChatId, enableEmailAlerts, enableTelegramAlerts } = req.body;
+        const userId = req.user._id;
+        
+        const updateData = {};
+        if (telegramChatId !== undefined) updateData.telegramChatId = telegramChatId;
+        if (enableEmailAlerts !== undefined) updateData.enableEmailAlerts = enableEmailAlerts;
+        if (enableTelegramAlerts !== undefined) updateData.enableTelegramAlerts = enableTelegramAlerts;
+        
+        const user = await userModel.findByIdAndUpdate(
+            userId,
+            updateData,
+            { new: true }
+        ).select('-password');
+        
+        res.status(200).json({ message: 'Notification settings updated successfully', user });
+    } catch (error) {
+        console.error('Update notification settings error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+}

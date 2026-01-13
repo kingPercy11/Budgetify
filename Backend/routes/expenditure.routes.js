@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const { body } = require('express-validator');
 const authMiddleware = require('../middlewares/auth.middleware');
+const alertService = require('../services/alert.service');
 
 router.post('/add', authMiddleware.authUser, [
     body('amount').isNumeric().withMessage('Amount must be a number'),
@@ -14,6 +15,12 @@ router.post('/add', authMiddleware.authUser, [
         const { username } = req.user;
         const { amount, category, date, description, type } = req.body;
         const expenditure = await expenditureController.addExpenditure({ username, amount, category, date, description, type });
+        
+        // Check limits and send alerts for expenses (debit)
+        if (type === 'debit') {
+            await alertService.checkAndSendAlerts(username, amount, category);
+        }
+        
         res.status(201).json(expenditure);
     } catch (error) {
         res.status(400).json({ error: error.message });
