@@ -95,6 +95,7 @@ const Account = () => {
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const [expenses, setExpenses] = useState([])
+  const [limitsData, setLimitsData] = useState(null)
   const [stats, setStats] = useState({
     totalTransactions: 0,
     totalIncome: 0,
@@ -127,8 +128,22 @@ const Account = () => {
 
     if (user?.username) {
       fetchExpenses()
+      fetchLimits()
     }
   }, [user?.username])
+
+  const fetchLimits = async () => {
+    try {
+      const token = localStorage.getItem('token')
+      const response = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/limits`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      setLimitsData(response.data)
+    } catch (err) {
+      console.error('Failed to fetch limits:', err)
+    }
+  }
 
   const fetchExpenses = async () => {
     try {
@@ -317,7 +332,7 @@ const Account = () => {
             </div>
 
             {/* Profile Information Section */}
-            <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 items-start'>
+            <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 items-start mb-6'>
               {/* Account Details Card */}
               <AccountDetailsCard 
                 user={user}
@@ -363,21 +378,159 @@ const Account = () => {
                 countries={countries}
               />
 
-          <div className='space-y-6'>
-            {/* Financial Overview Card */}
-            <FinancialOverviewCard stats={stats} />
-            
-            {/* Daily Activity Chart */}
-            <DailyActivityChart 
-              getDailyBreakdown={getDailyBreakdown}
-              expenses={expenses}
-            />
-          </div>
-        </div>
+              <div className='space-y-6'>
+                {/* Financial Overview Card */}
+                <FinancialOverviewCard stats={stats} />
+              </div>
+            </div>
+
+            {/* Budget Limits and Daily Activity Section */}
+            <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 items-start mb-6'>
+              {/* Budget Limits Progress */}
+              {limitsData && limitsData.limits && (
+                <div className='stats-card bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-6'>
+                  <div className='flex items-center justify-between mb-6'>
+                    <h2 className='text-2xl font-bold text-blue-900 flex items-center'>
+                      <i className="ri-funds-line mr-2 text-3xl"></i>
+                      Budget Limits & Progress
+                    </h2>
+                    <Link 
+                      to='/limits' 
+                      className='bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-xl flex items-center transition-all shadow-lg hover:shadow-xl text-sm'
+                    >
+                      <i className="ri-settings-3-line mr-1"></i>
+                      Manage
+                    </Link>
+                  </div>
+
+                  <div className='space-y-4'>
+                    {/* Monthly Budget */}
+                    {limitsData.monthly && limitsData.monthly.budget > 0 && (
+                      <div className='p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border-2 border-blue-200 shadow-md hover:shadow-lg transition-all'>
+                        <div className='flex justify-between items-center mb-2'>
+                          <span className='font-bold text-blue-900 flex items-center'>
+                            <i className="ri-calendar-line mr-2 text-xl"></i>
+                            Monthly Budget
+                          </span>
+                          <span className='text-sm font-bold text-blue-700 bg-white px-2 py-1 rounded-lg'>
+                            {limitsData.monthly.percentage.toFixed(0)}%
+                          </span>
+                        </div>
+                        <div className='w-full bg-gray-300 rounded-full h-3 mb-2 shadow-inner'>
+                          <div
+                            className={`h-3 rounded-full transition-all shadow-sm ${
+                              limitsData.monthly.percentage >= 100 ? 'bg-gradient-to-r from-red-500 to-red-600' :
+                              limitsData.monthly.percentage >= 90 ? 'bg-gradient-to-r from-orange-500 to-orange-600' :
+                              limitsData.monthly.percentage >= 80 ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' :
+                              'bg-gradient-to-r from-green-500 to-green-600'
+                            }`}
+                            style={{ width: `${Math.min(100, limitsData.monthly.percentage)}%` }}
+                          ></div>
+                        </div>
+                        <div className='flex justify-between text-xs text-blue-800 font-medium'>
+                          <span>₹{limitsData.monthly.totalSpent.toFixed(0)} spent</span>
+                          <span>₹{limitsData.monthly.remaining.toFixed(0)} left</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Weekly Limit */}
+                    {limitsData.weekly && limitsData.weekly.limit > 0 && (
+                      <div className='p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl border-2 border-purple-200 shadow-md hover:shadow-lg transition-all'>
+                        <div className='flex justify-between items-center mb-2'>
+                          <span className='font-bold text-purple-900 flex items-center'>
+                            <i className="ri-calendar-week-line mr-2 text-xl"></i>
+                            Weekly Limit
+                          </span>
+                          <span className='text-sm font-bold text-purple-700 bg-white px-2 py-1 rounded-lg'>
+                            {limitsData.weekly.percentage.toFixed(0)}%
+                          </span>
+                        </div>
+                        <div className='w-full bg-gray-300 rounded-full h-3 mb-2 shadow-inner'>
+                          <div
+                            className={`h-3 rounded-full transition-all shadow-sm ${
+                              limitsData.weekly.percentage >= 100 ? 'bg-gradient-to-r from-red-500 to-red-600' :
+                              limitsData.weekly.percentage >= 90 ? 'bg-gradient-to-r from-orange-500 to-orange-600' :
+                              limitsData.weekly.percentage >= 80 ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' :
+                              'bg-gradient-to-r from-green-500 to-green-600'
+                            }`}
+                            style={{ width: `${Math.min(100, limitsData.weekly.percentage)}%` }}
+                          ></div>
+                        </div>
+                        <div className='flex justify-between text-xs text-purple-800 font-medium'>
+                          <span>₹{limitsData.weekly.spent.toFixed(0)} spent</span>
+                          <span>₹{limitsData.weekly.remaining.toFixed(0)} left</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Daily Limit */}
+                    {limitsData.daily && limitsData.daily.limit > 0 && (
+                      <div className='p-4 bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl border-2 border-orange-200 shadow-md hover:shadow-lg transition-all'>
+                        <div className='flex justify-between items-center mb-2'>
+                          <span className='font-bold text-orange-900 flex items-center'>
+                            <i className="ri-sun-line mr-2 text-xl"></i>
+                            Daily Limit
+                          </span>
+                          <span className='text-sm font-bold text-orange-700 bg-white px-2 py-1 rounded-lg'>
+                            {limitsData.daily.percentage.toFixed(0)}%
+                          </span>
+                        </div>
+                        <div className='w-full bg-gray-300 rounded-full h-3 mb-2 shadow-inner'>
+                          <div
+                            className={`h-3 rounded-full transition-all shadow-sm ${
+                              limitsData.daily.percentage >= 100 ? 'bg-gradient-to-r from-red-500 to-red-600' :
+                              limitsData.daily.percentage >= 90 ? 'bg-gradient-to-r from-orange-500 to-orange-600' :
+                              limitsData.daily.percentage >= 80 ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' :
+                              'bg-gradient-to-r from-green-500 to-green-600'
+                            }`}
+                            style={{ width: `${Math.min(100, limitsData.daily.percentage)}%` }}
+                          ></div>
+                        </div>
+                        <div className='flex justify-between text-xs text-orange-800 font-medium'>
+                          <span>₹{limitsData.daily.spent.toFixed(0)} spent</span>
+                          <span>₹{limitsData.daily.remaining.toFixed(0)} left</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Savings Goal */}
+                    {limitsData.savings && limitsData.savings.goal > 0 && (
+                      <div className='p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-xl border-2 border-green-200 shadow-md hover:shadow-lg transition-all'>
+                        <div className='flex justify-between items-center mb-2'>
+                          <span className='font-bold text-green-900 flex items-center'>
+                            <i className="ri-piggy-bank-line mr-2 text-xl"></i>
+                            Savings Goal
+                          </span>
+                          <span className='text-sm font-bold text-green-700 bg-white px-2 py-1 rounded-lg'>
+                            {limitsData.savings.percentage.toFixed(0)}%
+                          </span>
+                        </div>
+                        <div className='w-full bg-gray-300 rounded-full h-3 mb-2 shadow-inner'>
+                          <div
+                            className='h-3 rounded-full bg-gradient-to-r from-green-500 to-green-600 transition-all shadow-sm'
+                            style={{ width: `${Math.min(100, limitsData.savings.percentage)}%` }}
+                          ></div>
+                        </div>
+                        <div className='flex justify-between text-xs text-green-800 font-medium'>
+                          <span>₹{Math.max(0, limitsData.savings.actual).toFixed(0)} saved</span>
+                          <span>₹{limitsData.savings.remaining.toFixed(0)} to go</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Daily Activity Chart */}
+              <DailyActivityChart 
+                getDailyBreakdown={getDailyBreakdown}
+                expenses={expenses}
+              />
+            </div>
           </div>
         </div>
       </div>
-
   )
 }
 
