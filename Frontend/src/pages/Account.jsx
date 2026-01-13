@@ -15,7 +15,6 @@ import {
   Legend,
   Filler
 } from 'chart.js'
-import { Line } from 'react-chartjs-2'
 
 // Register ChartJS components
 ChartJS.register(
@@ -28,6 +27,12 @@ ChartJS.register(
   Legend,
   Filler
 )
+
+// Import components
+import PageHeader from '../components/shared/PageHeader'
+import AccountDetailsCard from '../components/account/AccountDetailsCard'
+import FinancialOverviewCard from '../components/account/FinancialOverviewCard'
+import DailyActivityChart from '../components/account/DailyActivityChart'
 
 const Account = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -44,6 +49,7 @@ const Account = () => {
   const [currentPassword, setCurrentPassword] = useState('')
   
   const [age, setAge] = useState('')
+  const [city, setCity] = useState('')
   const [state, setState] = useState('')
   const [country, setCountry] = useState('')
   const [phoneNumber, setPhoneNumber] = useState('')
@@ -296,54 +302,7 @@ const Account = () => {
     <div className="min-h-screen bg-cover bg-center bg-[url('/Home.png')] bg-fixed">
       <div className="fixed inset-0 bg-linear-to-b from-blue-900/50 via-blue-600/40 to-blue-900/50 backdrop-blur-md"></div>
         
-        {/* Header */}
-        <div className="fixed top-0 left-0 w-full h-20 z-50 bg-black/40 backdrop-blur-md shadow-lg">
-          <div className="flex items-center justify-between h-full px-8">
-            <Link to='/home' className='header-logo'>
-              <img className='w-52 hover:scale-105 transition-transform duration-300 cursor-pointer drop-shadow-[0_0_25px_rgba(59,130,246,0.8)] hover:drop-shadow-[0_0_35px_rgba(59,130,246,1)] brightness-110' src="/Logo.png" alt="Budgetify Logo" />
-            </Link>
-            
-            {/* Menu Dropdown */}
-            <div className="relative header-menu">
-              <button 
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className='bg-blue-200/30 hover:bg-blue-300/40 text-white p-3 rounded-lg font-semibold transition-all duration-300 backdrop-blur-sm'
-              >
-                <i className="ri-menu-line text-2xl"></i>
-              </button>
-              
-              {/* Dropdown Menu */}
-              {isMenuOpen && (
-                <div className="absolute right-0 mt-2 w-56 bg-blue-200/98 backdrop-blur-md rounded-lg shadow-2xl overflow-hidden border border-white/60">
-                  <Link 
-                    to='/home' 
-                    className='flex items-center gap-3 px-6 py-4 hover:bg-blue-500/20 transition-colors duration-200 text-gray-800'
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <i className="ri-home-5-line text-2xl text-blue-600"></i>
-                    <span className='font-semibold'>Home</span>
-                  </Link>
-                  <Link 
-                    to='/account' 
-                    className='flex items-center gap-3 px-6 py-4 hover:bg-blue-500/20 transition-colors duration-200 text-gray-800 border-t border-gray-200/50'
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <i className="ri-account-circle-line text-2xl text-blue-600"></i>
-                    <span className='font-semibold'>My Account</span>
-                  </Link>
-                  <Link 
-                    to='/logout' 
-                    className='flex items-center gap-3 px-6 py-4 hover:bg-red-500/20 transition-colors duration-200 text-gray-800 border-t border-gray-200/50'
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <i className="ri-logout-box-line text-2xl text-red-600"></i>
-                    <span className='font-semibold'>Logout</span>
-                  </Link>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+      <PageHeader isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
         
         {/* Content */}
         <div className="relative z-10 pt-24 px-4 pb-16">
@@ -360,460 +319,59 @@ const Account = () => {
             {/* Profile Information Section */}
             <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 items-start'>
               {/* Account Details Card */}
-              <div className='profile-card bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl p-8 border border-blue-200 h-fit'>
-                <h2 className='text-3xl font-bold text-blue-900 mb-6 flex items-center gap-2'>
-                  <i className="ri-user-settings-line"></i>
-                  Account Details
-                </h2>
-            
-            {message && (
-              <div className='bg-green-50 border border-green-200 text-green-700 p-4 rounded-xl mb-6 flex items-center gap-2'>
-                <i className="ri-checkbox-circle-line text-xl"></i>
-                <p className="text-sm font-semibold">{message}</p>
-              </div>
-            )}
-            
-            {error && (
-              <div className='bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl mb-6 flex items-center gap-2'>
-                <i className="ri-error-warning-line text-xl"></i>
-                <p className="text-sm font-semibold">{error}</p>
-              </div>
-            )}
-            
-            {/* Username Section */}
-            <div className='bg-blue-50 rounded-2xl p-6 mb-4 border border-blue-200'>
-              <div className='flex items-center justify-between mb-2'>
-                <label className='text-sm font-semibold text-gray-600 uppercase tracking-wide'>Username</label>
-                {!isEditingUsername && (
-                  <button 
-                    onClick={() => setIsEditingUsername(true)}
-                    className='text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center gap-1'
-                  >
-                    <i className="ri-edit-line"></i> Edit
-                  </button>
-                )}
-              </div>
-              {!isEditingUsername ? (
-                <p className='text-2xl font-bold text-gray-800'>{user.username || 'N/A'}</p>
-              ) : (
-                <div className='space-y-3'>
-                  <input
-                    type="text"
-                    value={newUsername}
-                    onChange={(e) => setNewUsername(e.target.value)}
-                    placeholder="Enter new username"
-                    className='w-full px-4 py-3 border border-blue-300 rounded-xl focus:ring-2 focus:ring-blue-400 outline-none'
-                  />
-                  <div className='flex gap-2'>
-                    <button 
-                      onClick={handleUpdateUsername}
-                      className='flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition'
-                    >
-                      Save
-                    </button>
-                    <button 
-                      onClick={() => {
-                        setIsEditingUsername(false)
-                        setNewUsername('')
-                      }}
-                      className='flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg transition'
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-            
-            {/* Email Section */}
-            <div className='bg-blue-50 rounded-2xl p-6 mb-4 border border-blue-200'>
-              <div className='flex items-center justify-between mb-2'>
-                <label className='text-sm font-semibold text-gray-600 uppercase tracking-wide'>Email</label>
-                {!isEditingEmail && (
-                  <button 
-                    onClick={() => setIsEditingEmail(true)}
-                    className='text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center gap-1'
-                  >
-                    <i className="ri-edit-line"></i> Edit
-                  </button>
-                )}
-              </div>
-              {!isEditingEmail ? (
-                <p className='text-2xl font-bold text-gray-800'>{user.email || 'N/A'}</p>
-              ) : (
-                <div className='space-y-3'>
-                  <input
-                    type="email"
-                    value={newEmail}
-                    onChange={(e) => setNewEmail(e.target.value)}
-                    placeholder="Enter new email"
-                    className='w-full px-4 py-3 border border-blue-300 rounded-xl focus:ring-2 focus:ring-blue-400 outline-none'
-                  />
-                  <div className='flex gap-2'>
-                    <button 
-                      onClick={handleUpdateEmail}
-                      className='flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition'
-                    >
-                      Save
-                    </button>
-                    <button 
-                      onClick={() => {
-                        setIsEditingEmail(false)
-                        setNewEmail('')
-                      }}
-                      className='flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg transition'
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-            
-            {/* Password Section */}
-            <div className='bg-blue-50 rounded-2xl p-6 border border-blue-200'>
-              <div className='flex items-center justify-between mb-2'>
-                <label className='text-sm font-semibold text-gray-600 uppercase tracking-wide'>Password</label>
-                {!isEditingPassword && (
-                  <button 
-                    onClick={() => setIsEditingPassword(true)}
-                    className='text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center gap-1'
-                  >
-                    <i className="ri-edit-line"></i> Change
-                  </button>
-                )}
-              </div>
-              {!isEditingPassword ? (
-                <p className='text-2xl font-bold text-gray-800'>••••••••</p>
-              ) : (
-                <div className='space-y-3'>
-                  <div className="relative">
-                    <input
-                      type={showCurrentPassword ? "text" : "password"}
-                      value={currentPassword}
-                      onChange={(e) => setCurrentPassword(e.target.value)}
-                      placeholder="Current password"
-                      className='w-full px-4 py-3 pr-12 border border-blue-300 rounded-xl focus:ring-2 focus:ring-blue-400 outline-none'
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
-                    >
-                      <i className={`${showCurrentPassword ? 'ri-eye-off-line' : 'ri-eye-line'} text-xl`}></i>
-                    </button>
-                  </div>
-                  <div className="relative">
-                    <input
-                      type={showNewPassword ? "text" : "password"}
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      placeholder="New password"
-                      className='w-full px-4 py-3 pr-12 border border-blue-300 rounded-xl focus:ring-2 focus:ring-blue-400 outline-none'
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowNewPassword(!showNewPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
-                    >
-                      <i className={`${showNewPassword ? 'ri-eye-off-line' : 'ri-eye-line'} text-xl`}></i>
-                    </button>
-                  </div>
-                  <div className="relative">
-                    <input
-                      type={showConfirmPassword ? "text" : "password"}
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      placeholder="Confirm new password"
-                      className='w-full px-4 py-3 pr-12 border border-blue-300 rounded-xl focus:ring-2 focus:ring-blue-400 outline-none'
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
-                    >
-                      <i className={`${showConfirmPassword ? 'ri-eye-off-line' : 'ri-eye-line'} text-xl`}></i>
-                    </button>
-                  </div>
-                  <div className='flex gap-2'>
-                    <button 
-                      onClick={handleUpdatePassword}
-                      className='flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition'
-                    >
-                      Update Password
-                    </button>
-                    <button 
-                      onClick={() => {
-                        setIsEditingPassword(false)
-                        setNewPassword('')
-                        setConfirmPassword('')
-                        setCurrentPassword('')
-                      }}
-                      className='flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg transition'
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-            
-            {/* Profile Details Section */}
-            <div className='bg-blue-50 rounded-2xl p-6 border border-blue-200 mt-4'>
-              <div className='flex items-center justify-between mb-2'>
-                <label className='text-sm font-semibold text-gray-600 uppercase tracking-wide'>Profile Details</label>
-                {!isEditingProfile && (
-                  <button 
-                    onClick={() => {
-                      setIsEditingProfile(true)
-                      setAge(user.age || '')
-                      setState(user.state || '')
-                      setCountry(user.country || '')
-                      setPhoneNumber(user.phoneNumber || '')
-                    }}
-                    className='text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center gap-1'
-                  >
-                    <i className="ri-edit-line"></i> Edit
-                  </button>
-                )}
-              </div>
-              {!isEditingProfile ? (
-                <div className='space-y-3'>
-                  <div>
-                    <p className='text-xs text-gray-500 mb-1'>Age</p>
-                    <p className='text-lg font-bold text-gray-800'>{user.age || 'Not set'}</p>
-                  </div>
-                  <div>
-                    <p className='text-xs text-gray-500 mb-1'>State</p>
-                    <p className='text-lg font-bold text-gray-800'>{user.state || 'Not set'}</p>
-                  </div>
-                  <div>
-                    <p className='text-xs text-gray-500 mb-1'>Country</p>
-                    <p className='text-lg font-bold text-gray-800'>
-                      {user.country ? `${countries.find(c => c.name === user.country)?.flag || ''} ${user.country}` : 'Not set'}
-                    </p>
-                  </div>
-                  <div>
-                    <p className='text-xs text-gray-500 mb-1'>Phone Number</p>
-                    <p className='text-lg font-bold text-gray-800'>{user.phoneNumber || 'Not set'}</p>
-                  </div>
-                </div>
-              ) : (
-                <div className='space-y-3'>
-                  <div>
-                    <label className='block text-xs text-gray-600 mb-1 font-semibold'>Age</label>
-                    <input
-                      type="number"
-                      value={age}
-                      onChange={(e) => setAge(e.target.value)}
-                      placeholder="Enter your age"
-                      min="1"
-                      max="120"
-                      className='w-full px-4 py-3 border border-blue-300 rounded-xl focus:ring-2 focus:ring-blue-400 outline-none'
-                    />
-                  </div>
-                  <div>
-                    <label className='block text-xs text-gray-600 mb-1 font-semibold'>State</label>
-                    <input
-                      type="text"
-                      value={state}
-                      onChange={(e) => setState(e.target.value)}
-                      placeholder="Enter your state"
-                      className='w-full px-4 py-3 border border-blue-300 rounded-xl focus:ring-2 focus:ring-blue-400 outline-none'
-                    />
-                  </div>
-                  <div>
-                    <label className='block text-xs text-gray-600 mb-1 font-semibold'>Country</label>
-                    <select
-                      value={country}
-                      onChange={(e) => setCountry(e.target.value)}
-                      className='w-full px-4 py-3 border border-blue-300 rounded-xl focus:ring-2 focus:ring-blue-400 outline-none bg-white'
-                    >
-                      <option value="">Select your country</option>
-                      {countries.map(c => (
-                        <option key={c.code} value={c.name}>
-                          {c.flag} {c.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className='block text-xs text-gray-600 mb-1 font-semibold'>
-                      Phone Number <span className='text-red-600'>*</span>
-                    </label>
-                    <input
-                      type="tel"
-                      value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(e.target.value)}
-                      placeholder="Enter your phone number"
-                      required
-                      className='w-full px-4 py-3 border border-blue-300 rounded-xl focus:ring-2 focus:ring-blue-400 outline-none'
-                    />
-                  </div>
-                  <div className='flex gap-2 pt-2'>
-                    <button 
-                      onClick={handleUpdateProfile}
-                      className='flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition'
-                    >
-                      Save
-                    </button>
-                    <button 
-                      onClick={() => {
-                        setIsEditingProfile(false)
-                        setAge('')
-                        setCity('')
-                        setCountry('')
-                        setPhoneNumber('')
-                      }}
-                      className='flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg transition'
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
+              <AccountDetailsCard 
+                user={user}
+                message={message}
+                error={error}
+                isEditingUsername={isEditingUsername}
+                setIsEditingUsername={setIsEditingUsername}
+                newUsername={newUsername}
+                setNewUsername={setNewUsername}
+                handleUpdateUsername={handleUpdateUsername}
+                isEditingEmail={isEditingEmail}
+                setIsEditingEmail={setIsEditingEmail}
+                newEmail={newEmail}
+                setNewEmail={setNewEmail}
+                handleUpdateEmail={handleUpdateEmail}
+                isEditingPassword={isEditingPassword}
+                setIsEditingPassword={setIsEditingPassword}
+                currentPassword={currentPassword}
+                setCurrentPassword={setCurrentPassword}
+                newPassword={newPassword}
+                setNewPassword={setNewPassword}
+                confirmPassword={confirmPassword}
+                setConfirmPassword={setConfirmPassword}
+                showCurrentPassword={showCurrentPassword}
+                setShowCurrentPassword={setShowCurrentPassword}
+                showNewPassword={showNewPassword}
+                setShowNewPassword={setShowNewPassword}
+                showConfirmPassword={showConfirmPassword}
+                setShowConfirmPassword={setShowConfirmPassword}
+                handleUpdatePassword={handleUpdatePassword}
+                isEditingProfile={isEditingProfile}
+                setIsEditingProfile={setIsEditingProfile}
+                age={age}
+                setAge={setAge}
+                state={state}
+                setState={setState}
+                country={country}
+                setCountry={setCountry}
+                phoneNumber={phoneNumber}
+                setPhoneNumber={setPhoneNumber}
+                setCity={setCity}
+                handleUpdateProfile={handleUpdateProfile}
+                countries={countries}
+              />
 
-          {/* Financial Overview Card */}
-          <div className='profile-card bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl p-8 border border-blue-200 h-fit'>
-            <h2 className='text-3xl font-bold text-blue-900 mb-6 flex items-center gap-2'>
-              <i className="ri-line-chart-line"></i>
-              Financial Overview
-            </h2>
-            <p className='text-sm text-gray-600 mb-6'>Last 30 Days Summary</p>
+          <div className='space-y-6'>
+            {/* Financial Overview Card */}
+            <FinancialOverviewCard stats={stats} />
             
-            <div className='space-y-4'>
-              <div className="bg-linear-to-r from-green-50 to-green-100 rounded-xl p-5 border-l-4 border-green-500">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-gray-600 text-sm font-semibold mb-1">Total Income</p>
-                    <p className="text-3xl font-bold text-green-600">₹{stats.totalIncome.toFixed(0)}</p>
-                  </div>
-                  <i className="ri-arrow-down-circle-fill text-5xl text-green-500"></i>
-                </div>
-              </div>
-
-              <div className="bg-linear-to-r from-red-50 to-red-100 rounded-xl p-5 border-l-4 border-red-500">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-gray-600 text-sm font-semibold mb-1">Total Expenses</p>
-                    <p className="text-3xl font-bold text-red-600">₹{stats.totalExpenses.toFixed(0)}</p>
-                  </div>
-                  <i className="ri-arrow-up-circle-fill text-5xl text-red-500"></i>
-                </div>
-              </div>
-
-              <div className={`bg-linear-to-r rounded-xl p-5 border-l-4 ${
-                stats.netBalance >= 0 
-                  ? 'from-blue-50 to-blue-100 border-blue-500' 
-                  : 'from-orange-50 to-orange-100 border-orange-500'
-              }`}>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-gray-600 text-sm font-semibold mb-1">Net Balance</p>
-                    <p className={`text-3xl font-bold ${
-                      stats.netBalance >= 0 ? 'text-blue-600' : 'text-orange-600'
-                    }`}>
-                      ₹{stats.netBalance.toFixed(0)}
-                    </p>
-                  </div>
-                  <i className={`ri-wallet-fill text-5xl ${
-                    stats.netBalance >= 0 ? 'text-blue-500' : 'text-orange-500'
-                  }`}></i>
-                </div>
-              </div>
-
-              <div className="bg-linear-to-r from-purple-50 to-purple-100 rounded-xl p-5 border-l-4 border-purple-500">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-gray-600 text-sm font-semibold mb-1">Savings Rate</p>
-                    <p className={`text-3xl font-bold ${
-                      stats.savingsRate >= 20 ? 'text-green-600' : stats.savingsRate >= 0 ? 'text-yellow-600' : 'text-red-600'
-                    }`}>
-                      {stats.savingsRate.toFixed(1)}%
-                    </p>
-                  </div>
-                  <i className="ri-percent-line text-5xl text-purple-500"></i>
-                </div>
-              </div>
-
-              <div className="bg-linear-to-r from-indigo-50 to-indigo-100 rounded-xl p-5 border-l-4 border-indigo-500">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-gray-600 text-sm font-semibold mb-1">Avg Daily Spend</p>
-                    <p className="text-3xl font-bold text-indigo-600">₹{stats.avgDailySpend.toFixed(0)}</p>
-                  </div>
-                  <i className="ri-calendar-check-fill text-5xl text-indigo-500"></i>
-                </div>
-              </div>
-
-              <div className="bg-linear-to-r from-pink-50 to-pink-100 rounded-xl p-5 border-l-4 border-pink-500">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-gray-600 text-sm font-semibold mb-1">Total Transactions</p>
-                    <p className="text-3xl font-bold text-pink-600">{stats.totalTransactions}</p>
-                  </div>
-                  <i className="ri-exchange-line text-5xl text-pink-500"></i>
-                </div>
-              </div>
-            </div>
-
-            {/* Day-to-Day Chart */}
-            <div className='bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl p-6 border border-blue-200 mt-6'>
-              <h3 className='text-xl font-bold text-blue-900 mb-4 flex items-center gap-2'>
-                <i className="ri-line-chart-line"></i>
-                Day-to-Day Activity (Last 30 Days)
-              </h3>
-              <div className='h-64'>
-                {expenses.length > 0 ? (
-                  <Line 
-                    data={{
-                      labels: getDailyBreakdown().labels,
-                      datasets: [
-                        {
-                          label: 'Daily Income',
-                          data: getDailyBreakdown().income,
-                          borderColor: 'rgb(34, 197, 94)',
-                          backgroundColor: 'rgba(34, 197, 94, 0.2)',
-                          tension: 0.3,
-                          fill: true,
-                          pointRadius: 3,
-                          pointHoverRadius: 5
-                        },
-                        {
-                          label: 'Daily Expenses',
-                          data: getDailyBreakdown().expenses,
-                          borderColor: 'rgb(239, 68, 68)',
-                          backgroundColor: 'rgba(239, 68, 68, 0.2)',
-                          tension: 0.3,
-                          fill: true,
-                          pointRadius: 3,
-                          pointHoverRadius: 5
-                        }
-                      ]
-                    }}
-                    options={{
-                      responsive: true,
-                      maintainAspectRatio: false,
-                      plugins: {
-                        legend: {
-                          position: 'bottom',
-                          labels: { color: '#1e40af', font: { size: 11 } }
-                        }
-                      },
-                      scales: {
-                        y: {
-                          beginAtZero: true
-                        }
-                      }
-                    }}
-                  />
-                ) : (
-                  <p className='text-center text-gray-500 pt-24'>No data available</p>
-                )}
-              </div>
-            </div>
+            {/* Daily Activity Chart */}
+            <DailyActivityChart 
+              getDailyBreakdown={getDailyBreakdown}
+              expenses={expenses}
+            />
           </div>
         </div>
           </div>
