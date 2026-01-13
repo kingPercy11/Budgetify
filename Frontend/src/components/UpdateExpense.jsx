@@ -15,8 +15,12 @@ const UpdateExpense = ({ isOpen, onClose, expense, onExpenseUpdated }) => {
     if (expense) {
       setAmount(expense.amount.toString())
       setCategory(expense.category)
-      // Format date to YYYY-MM-DD for input
-      const formattedDate = new Date(expense.date).toISOString().split('T')[0]
+      // Format date to YYYY-MM-DD for input (using local timezone)
+      const expenseDate = new Date(expense.date)
+      const year = expenseDate.getFullYear()
+      const month = String(expenseDate.getMonth() + 1).padStart(2, '0')
+      const day = String(expenseDate.getDate()).padStart(2, '0')
+      const formattedDate = `${year}-${month}-${day}`
       setDate(formattedDate)
       setDescription(expense.description || '')
       setType(expense.type || 'debit')
@@ -188,7 +192,13 @@ const UpdateExpense = ({ isOpen, onClose, expense, onExpenseUpdated }) => {
               type='date'
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              max={new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0]}
+              max={(() => {
+                const today = new Date()
+                const year = today.getFullYear()
+                const month = String(today.getMonth() + 1).padStart(2, '0')
+                const day = String(today.getDate()).padStart(2, '0')
+                return `${year}-${month}-${day}`
+              })()}
               required
               className='w-full px-4 py-3 bg-white border-2 border-blue-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm'
             />

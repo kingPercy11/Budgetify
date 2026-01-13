@@ -181,7 +181,13 @@ const AddExpense = ({ isOpen, onClose, onExpenseAdded }) => {
               type='date'
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              max={new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0]}
+              max={(() => {
+                const today = new Date()
+                const year = today.getFullYear()
+                const month = String(today.getMonth() + 1).padStart(2, '0')
+                const day = String(today.getDate()).padStart(2, '0')
+                return `${year}-${month}-${day}`
+              })()}
               required
               className='w-full px-4 py-3 bg-white border-2 border-blue-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm'
             />
