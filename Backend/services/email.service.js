@@ -1,13 +1,23 @@
 const nodemailer = require('nodemailer');
 
 // Debug: Check if environment variables are loaded
+console.log('=== EMAIL SERVICE INITIALIZATION ===');
 console.log('Email Config:', {
     service: process.env.EMAIL_SERVICE,
     user: process.env.EMAIL_USER,
-    passLength: process.env.EMAIL_PASSWORD?.length || 0
+    passLength: process.env.EMAIL_PASSWORD?.length || 0,
+    hasUser: !!process.env.EMAIL_USER,
+    hasPassword: !!process.env.EMAIL_PASSWORD,
+    frontendUrl: process.env.FRONTEND_URL,
+    nodeEnv: process.env.NODE_ENV
 });
 
-// Create transporter
+// Validate required environment variables
+if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
+    console.error('❌ CRITICAL: EMAIL_USER or EMAIL_PASSWORD is missing!');
+}
+
+// Create transporter with explicit configuration
 const transporter = nodemailer.createTransport({
     service: process.env.EMAIL_SERVICE || 'gmail',
     auth: {
@@ -16,9 +26,26 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+// Verify transporter connection on startup
+transporter.verify(function(error, success) {
+    if (error) {
+        console.error('❌ Email transporter verification FAILED:', error.message);
+        console.error('Error details:', { code: error.code, command: error.command });
+    } else {
+        console.log('✅ Email server is ready to send messages');
+    }
+});
+console.log('=================================');
+
 // Send password reset email
 module.exports.sendPasswordResetEmail = async (email, resetToken) => {
+    console.log('\n=== SENDING PASSWORD RESET EMAIL ===');
+    console.log('To:', email);
+    console.log('Token length:', resetToken?.length);
+    console.log('Frontend URL:', process.env.FRONTEND_URL);
+    
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+    console.log('Reset URL:', resetUrl);
     
     const mailOptions = {
         from: process.env.EMAIL_USER,
@@ -43,11 +70,21 @@ module.exports.sendPasswordResetEmail = async (email, resetToken) => {
     };
     
     try {
+        console.log('Attempting to send email...');
         const info = await transporter.sendMail(mailOptions);
-        console.log('Email sent successfully:', info.messageId);
+        console.log('✅ Password reset email sent successfully!');
+        console.log('Message ID:', info.messageId);
+        console.log('Response:', info.response);
+        console.log('====================================\n');
         return { success: true, message: 'Email sent successfully' };
     } catch (error) {
-        console.error('Detailed email error:', error);
+        console.error('❌ FAILED TO SEND PASSWORD RESET EMAIL');
+        console.error('Error message:', error.message);
+        console.error('Error code:', error.code);
+        console.error('Error command:', error.command);
+        console.error('Error response:', error.response);
+        console.error('Full error:', error);
+        console.log('====================================\n');
         throw new Error(`Failed to send email: ${error.message}`);
     }
 };
@@ -81,6 +118,10 @@ module.exports.sendPasswordResetConfirmation = async (email) => {
 
 // Send budget alert email
 module.exports.sendBudgetAlertEmail = async (email, alertData) => {
+    console.log('\n=== SENDING BUDGET ALERT EMAIL ===');
+    console.log('To:', email);
+    console.log('Alert data:', { username: alertData.username, type: alertData.type, percentage: alertData.percentage });
+    
     const { username, category, spent, limit, percentage, type, isOverspent } = alertData;
     
     let alertLevel, alertColor, alertMessage;
@@ -167,11 +208,18 @@ module.exports.sendBudgetAlertEmail = async (email, alertData) => {
     };
     
     try {
-        await transporter.sendMail(mailOptions);
-        console.log('Budget alert email sent successfully');
+        console.log('Attempting to send budget alert email...');
+        const info = await transporter.sendMail(mailOptions);
+        console.log('✅ Budget alert email sent successfully!');
+        console.log('Message ID:', info.messageId);
+        console.log('==================================\n');
         return { success: true, message: 'Email sent successfully' };
     } catch (error) {
-        console.error('Error sending budget alert email:', error);
+        console.error('❌ FAILED TO SEND BUDGET ALERT EMAIL');
+        console.error('Error message:', error.message);
+        console.error('Error code:', error.code);
+        console.error('Error response:', error.response);
+        console.log('==================================\n');
         return null;
     }
 };
