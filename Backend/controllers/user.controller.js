@@ -188,20 +188,33 @@ module.exports.forgotPassword = async(req,res,next) => {
         return res.status(400).json({ errors: errors.array() });
     }
     
+    console.log('\n=== FORGOT PASSWORD REQUEST ===');
+    console.log('Requested at:', new Date().toISOString());
+    
     try {
         const { email } = req.body;
+        console.log('Email:', email);
         
         // Generate reset token
+        console.log('Generating reset token...');
         const resetToken = await userService.generatePasswordResetToken(email);
+        console.log('Reset token generated, length:', resetToken?.length);
         
         // Send email with reset token
+        console.log('Calling email service...');
         await emailService.sendPasswordResetEmail(email, resetToken);
+        console.log('Email service call completed successfully');
+        console.log('================================\n');
         
         res.status(200).json({ 
             message: 'Password reset link has been sent to your email' 
         });
     } catch (error) {
-        console.error('Forgot password error:', error);
+        console.error('\n❌ FORGOT PASSWORD ERROR');
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+        console.error('================================\n');
+        
         if (error.message === 'User not found') {
             // Don't reveal if user exists or not for security
             return res.status(200).json({ 
