@@ -29,6 +29,7 @@ const Limits = () => {
   // Spending analysis state
   const [analysis, setAnalysis] = useState(null)
   const [autoSyncEnabled, setAutoSyncEnabled] = useState(true)
+  const [isTelegramSetupExpanded, setIsTelegramSetupExpanded] = useState(false)
 
   // Auto-sync monthly budget with sum of category limits
   useEffect(() => {
@@ -182,7 +183,7 @@ const Limits = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-cover bg-center bg-[url('/Home.png')] flex items-center justify-center">
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-900/40 via-blue-600/30 to-blue-900/40 backdrop-blur-sm"></div>
+        <div className="absolute inset-0 bg-linear-to-b from-blue-900/40 via-blue-600/30 to-blue-900/40 backdrop-blur-sm"></div>
         <div className="relative z-10 text-white text-2xl">
           <i className="ri-loader-4-line animate-spin text-4xl"></i>
           <p className="mt-4">Loading limits...</p>
@@ -417,7 +418,7 @@ const Limits = () => {
               <button
                 onClick={handleSaveLimits}
                 disabled={saving}
-                className="w-full bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold py-4 px-6 rounded-xl hover:from-blue-700 hover:to-blue-900 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-linear-to-r from-blue-600 to-blue-800 text-white font-bold py-4 px-6 rounded-xl hover:from-blue-700 hover:to-blue-900 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {saving ? 'Saving...' : 'Save All Limits'}
               </button>
@@ -426,7 +427,7 @@ const Limits = () => {
             {/* Right Column - Quick Stats */}
             <div className="space-y-6">
               {/* Overall Summary */}
-              <div className="bg-gradient-to-br from-blue-600 to-blue-800 text-white rounded-2xl shadow-2xl p-6">
+              <div className="bg-linear-to-br from-blue-600 to-blue-800 text-white rounded-2xl shadow-2xl p-6">
                 <h2 className="text-2xl font-bold mb-4 flex items-center">
                   <i className="ri-dashboard-line mr-2"></i>
                   Quick Summary
@@ -456,6 +457,77 @@ const Limits = () => {
                     <div className="text-sm">of ₹{savingsGoal || 0} goal</div>
                   </div>
                 </div>
+              </div>
+
+              {/* Telegram Setup Expandable Section */}
+              <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden">
+                <button
+                  onClick={() => setIsTelegramSetupExpanded(!isTelegramSetupExpanded)}
+                  className="w-full p-6 flex items-center justify-between text-left hover:bg-cyan-50 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="bg-cyan-600 text-white rounded-full p-3">
+                      <i className="ri-telegram-line text-2xl"></i>
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-cyan-900">Set Up Telegram Alerts</h3>
+                      <p className="text-sm text-cyan-600">Get instant budget notifications</p>
+                    </div>
+                  </div>
+                  <i className={`ri-arrow-${isTelegramSetupExpanded ? 'up' : 'down'}-s-line text-3xl text-cyan-600 transition-transform`}></i>
+                </button>
+                
+                {isTelegramSetupExpanded && (
+                  <div className="p-6 pt-0 border-t-2 border-cyan-100 animate-fadeIn">
+                    <div className="bg-linear-to-br from-cyan-50 to-blue-50 rounded-xl p-5">
+                      <p className="text-cyan-800 mb-4 font-medium">
+                        Follow these easy steps to receive budget alerts on Telegram:
+                      </p>
+                      
+                      <ol className="space-y-3 mb-5">
+                        <li className="flex items-start gap-3">
+                          <span className="shrink-0 w-7 h-7 bg-cyan-600 text-white rounded-full flex items-center justify-center font-bold text-sm">1</span>
+                          <div>
+                            <p className="font-semibold text-cyan-900">Open the Budgetify Alert Bot</p>
+                            <p className="text-sm text-cyan-700">Click the button below to open Telegram</p>
+                          </div>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <span className="shrink-0 w-7 h-7 bg-cyan-600 text-white rounded-full flex items-center justify-center font-bold text-sm">2</span>
+                          <div>
+                            <p className="font-semibold text-cyan-900">Tap "Start" in the bot</p>
+                            <p className="text-sm text-cyan-700">Then share your phone number when prompted</p>
+                          </div>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <span className="shrink-0 w-7 h-7 bg-cyan-600 text-white rounded-full flex items-center justify-center font-bold text-sm">3</span>
+                          <div>
+                            <p className="font-semibold text-cyan-900">You're all set!</p>
+                            <p className="text-sm text-cyan-700">Receive alerts when you hit 80%, 90%, or exceed your limits</p>
+                          </div>
+                        </li>
+                      </ol>
+                      
+                      <a
+                        href="https://t.me/Budgetify_alert_bot"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                      >
+                        <i className="ri-telegram-line text-xl"></i>
+                        Open Budgetify Alert Bot
+                        <i className="ri-external-link-line text-sm"></i>
+                      </a>
+                      
+                      <div className="mt-4 p-3 bg-cyan-100 border border-cyan-300 rounded-lg">
+                        <p className="text-xs text-cyan-800 flex items-center gap-2">
+                          <i className="ri-shield-check-line text-base"></i>
+                          Your phone number is only used to securely link your account. We never share your data.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Active Alerts */}
