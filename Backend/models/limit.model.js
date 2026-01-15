@@ -9,37 +9,37 @@ const limitSchema = new mongoose.Schema({
     },
     // Category-wise Monthly Limits
     categoryLimits: {
-        food: { type: Number, default: 0 },
-        transport: { type: Number, default: 0 },
-        shopping: { type: Number, default: 0 },
-        entertainment: { type: Number, default: 0 },
-        bills: { type: Number, default: 0 },
-        healthcare: { type: Number, default: 0 },
-        education: { type: Number, default: 0 },
-        other: { type: Number, default: 0 }
+        food: { type: Number, default: null },
+        transport: { type: Number, default: null },
+        shopping: { type: Number, default: null },
+        entertainment: { type: Number, default: null },
+        bills: { type: Number, default: null },
+        healthcare: { type: Number, default: null },
+        education: { type: Number, default: null },
+        other: { type: Number, default: null }
     },
     // Overall Monthly Budget Limit
     monthlyBudget: { 
         type: Number, 
-        default: 0,
+        default: null,
         min: 0
     },
     // Daily Spending Limit
     dailyLimit: { 
         type: Number, 
-        default: 0,
+        default: null,
         min: 0
     },
     // Monthly Savings Goal
     savingsGoal: { 
         type: Number, 
-        default: 0,
+        default: null,
         min: 0
     },
     // Weekly Budget Limit
     weeklyLimit: { 
         type: Number, 
-        default: 0,
+        default: null,
         min: 0
     }
 }, { 
