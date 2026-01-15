@@ -458,7 +458,7 @@ const Analysis = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-cover bg-center bg-[url('/Home.png')] bg-fixed flex items-center justify-center relative">
-        <div className="fixed inset-0 bg-linear-to-b from-blue-900/50 via-blue-600/40 to-blue-900/50 backdrop-blur-md"></div>
+        <div className="fixed inset-0 bg-gradient-to-b from-blue-900/50 via-blue-600/40 to-blue-900/50 backdrop-blur-md"></div>
         <div className="relative z-10 bg-white/90 rounded-xl p-8 shadow-2xl">
           <i className="ri-loader-4-line animate-spin text-5xl text-blue-600 block mb-4 text-center"></i>
           <div className="text-blue-900 font-semibold text-xl">Loading analytics...</div>
@@ -470,7 +470,7 @@ const Analysis = () => {
   if (error) {
     return (
       <div className="min-h-screen bg-cover bg-center bg-[url('/Home.png')] bg-fixed flex items-center justify-center relative">
-        <div className="fixed inset-0 bg-linear-to-b from-blue-900/50 via-blue-600/40 to-blue-900/50 backdrop-blur-md"></div>
+        <div className="fixed inset-0 bg-gradient-to-b from-blue-900/50 via-blue-600/40 to-blue-900/50 backdrop-blur-md"></div>
         <div className="relative z-10 bg-white/90 rounded-xl p-8 shadow-2xl max-w-md">
           <i className="ri-error-warning-line text-5xl text-red-600 block mb-4 text-center"></i>
           <h2 className="text-2xl font-bold text-gray-800 mb-2 text-center">Error Loading Data</h2>
@@ -491,7 +491,7 @@ const Analysis = () => {
 
   return (
     <div className="min-h-screen bg-cover bg-center bg-[url('/Home.png')] bg-fixed">
-      <div className="fixed inset-0 bg-linear-to-b from-blue-900/50 via-blue-600/40 to-blue-900/50 backdrop-blur-md"></div>
+      <div className="fixed inset-0 bg-gradient-to-b from-blue-900/50 via-blue-600/40 to-blue-900/50 backdrop-blur-md"></div>
       
       <AnalysisHeader isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
 

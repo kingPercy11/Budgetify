@@ -77,7 +77,7 @@ const Home = () => {
   return (
     <div>
         <div className="min-h-screen bg-cover bg-center bg-[url('/Home.png')] flex flex-col relative">
-            <div className="absolute inset-0 bg-linear-to-b from-blue-900/40 via-blue-600/30 to-blue-900/40 backdrop-blur-sm"></div>
+            <div className="absolute inset-0 bg-gradient-to-b from-blue-900/40 via-blue-600/30 to-blue-900/40 backdrop-blur-sm"></div>
             
             {/* Header */}
             <PageHeader isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
