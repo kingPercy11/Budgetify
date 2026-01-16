@@ -18,15 +18,17 @@ router.post('/add', authMiddleware.authUser, [
         // Add expenditure first
         const expenditure = await expenditureController.addExpenditure({ username, amount, category, date, description, type });
         
-        // Send response immediately
-        res.status(201).json(expenditure);
-        
-        // Check limits and send alerts asynchronously for expenses (debit) - non-blocking
+        // Check limits and send alerts for expenses (debit)
+        let alertData = null;
         if (type === 'debit') {
-            alertService.checkAndSendAlerts(username, amount, category).catch(error => {
-                console.error('Error checking alerts:', error);
-            });
+            alertData = await alertService.checkAndSendAlerts(username, amount, category);
         }
+        
+        // Send response with expenditure and alert data
+        res.status(201).json({
+            ...expenditure,
+            alerts: alertData || { hasAlerts: false, alerts: [], userEmail: null, enableEmailAlerts: false }
+        });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }

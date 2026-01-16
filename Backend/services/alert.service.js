@@ -98,20 +98,27 @@ module.exports.checkAndSendAlerts = async (username, amount, category) => {
             }
         }
 
-        // Send all alerts
+        // Send Telegram alerts (Email alerts now handled by EmailJS on frontend)
         for (const alert of alerts) {
             // Send Telegram alert if enabled
             if (user.enableTelegramAlerts && user.telegramChatId) {
                 await telegramService.sendBudgetAlert(user.telegramChatId, alert);
             }
 
-            // Send Email alert if enabled
-            if (user.enableEmailAlerts && user.email) {
-                await emailService.sendBudgetAlertEmail(user.email, alert);
-            }
+            // NOTE: Email alert code kept in email.service.js but not used
+            // Email alerts now handled by EmailJS on frontend
+            // if (user.enableEmailAlerts && user.email) {
+            //     await emailService.sendBudgetAlertEmail(user.email, alert);
+            // }
         }
 
-        return alerts.length > 0;
+        // Return alerts array with user email info for frontend EmailJS
+        return {
+            hasAlerts: alerts.length > 0,
+            alerts: alerts,
+            userEmail: user.email,
+            enableEmailAlerts: user.enableEmailAlerts
+        };
     } catch (error) {
         console.error('Error checking and sending alerts:', error);
         return false;
