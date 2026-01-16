@@ -315,7 +315,7 @@ const Account = () => {
 
   return (
     <div className="min-h-screen bg-cover bg-center bg-[url('/Home.png')] bg-fixed">
-      <div className="fixed inset-0 bg-linear-to-b from-blue-900/50 via-blue-600/40 to-blue-900/50 backdrop-blur-md"></div>
+      <div className="fixed inset-0 bg-gradient-to-b from-blue-900/50 via-blue-600/40 to-blue-900/50 backdrop-blur-md"></div>
         
       <PageHeader isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
         
@@ -406,7 +406,7 @@ const Account = () => {
                   <div className='space-y-4'>
                     {/* Monthly Budget */}
                     {limitsData.monthly && limitsData.monthly.budget > 0 && (
-                      <div className='p-4 bg-linear-to-br from-blue-50 to-blue-100 rounded-xl border-2 border-blue-200 shadow-md hover:shadow-lg transition-all'>
+                      <div className='p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border-2 border-blue-200 shadow-md hover:shadow-lg transition-all'>
                         <div className='flex justify-between items-center mb-2'>
                           <span className='font-bold text-blue-900 flex items-center'>
                             <i className="ri-calendar-line mr-2 text-xl"></i>
@@ -419,10 +419,10 @@ const Account = () => {
                         <div className='w-full bg-gray-300 rounded-full h-3 mb-2 shadow-inner'>
                           <div
                             className={`h-3 rounded-full transition-all shadow-sm ${
-                              limitsData.monthly.percentage >= 100 ? 'bg-linear-to-r from-red-500 to-red-600' :
-                              limitsData.monthly.percentage >= 90 ? 'bg-linear-to-r from-orange-500 to-orange-600' :
-                              limitsData.monthly.percentage >= 80 ? 'bg-linear-to-r from-yellow-500 to-yellow-600' :
-                              'bg-linear-to-r from-green-500 to-green-600'
+                              limitsData.monthly.percentage >= 100 ? 'bg-gradient-to-r from-red-500 to-red-600' :
+                              limitsData.monthly.percentage >= 90 ? 'bg-gradient-to-r from-orange-500 to-orange-600' :
+                              limitsData.monthly.percentage >= 80 ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' :
+                              'bg-gradient-to-r from-green-500 to-green-600'
                             }`}
                             style={{ width: `${Math.min(100, limitsData.monthly.percentage)}%` }}
                           ></div>
@@ -436,7 +436,7 @@ const Account = () => {
 
                     {/* Weekly Limit */}
                     {limitsData.weekly && limitsData.weekly.limit > 0 && (
-                      <div className='p-4 bg-linear-to-br from-purple-50 to-purple-100 rounded-xl border-2 border-purple-200 shadow-md hover:shadow-lg transition-all'>
+                      <div className='p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl border-2 border-purple-200 shadow-md hover:shadow-lg transition-all'>
                         <div className='flex justify-between items-center mb-2'>
                           <span className='font-bold text-purple-900 flex items-center'>
                             <i className="ri-calendar-week-line mr-2 text-xl"></i>
@@ -449,10 +449,10 @@ const Account = () => {
                         <div className='w-full bg-gray-300 rounded-full h-3 mb-2 shadow-inner'>
                           <div
                             className={`h-3 rounded-full transition-all shadow-sm ${
-                              limitsData.weekly.percentage >= 100 ? 'bg-linear-to-r from-red-500 to-red-600' :
-                              limitsData.weekly.percentage >= 90 ? 'bg-linear-to-r from-orange-500 to-orange-600' :
-                              limitsData.weekly.percentage >= 80 ? 'bg-linear-to-r from-yellow-500 to-yellow-600' :
-                              'bg-linear-to-r from-green-500 to-green-600'
+                              limitsData.weekly.percentage >= 100 ? 'bg-gradient-to-r from-red-500 to-red-600' :
+                              limitsData.weekly.percentage >= 90 ? 'bg-gradient-to-r from-orange-500 to-orange-600' :
+                              limitsData.weekly.percentage >= 80 ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' :
+                              'bg-gradient-to-r from-green-500 to-green-600'
                             }`}
                             style={{ width: `${Math.min(100, limitsData.weekly.percentage)}%` }}
                           ></div>
@@ -466,7 +466,7 @@ const Account = () => {
 
                     {/* Daily Limit */}
                     {limitsData.daily && limitsData.daily.limit > 0 && (
-                      <div className='p-4 bg-linear-to-br from-orange-50 to-orange-100 rounded-xl border-2 border-orange-200 shadow-md hover:shadow-lg transition-all'>
+                      <div className='p-4 bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl border-2 border-orange-200 shadow-md hover:shadow-lg transition-all'>
                         <div className='flex justify-between items-center mb-2'>
                           <span className='font-bold text-orange-900 flex items-center'>
                             <i className="ri-sun-line mr-2 text-xl"></i>
@@ -479,10 +479,10 @@ const Account = () => {
                         <div className='w-full bg-gray-300 rounded-full h-3 mb-2 shadow-inner'>
                           <div
                             className={`h-3 rounded-full transition-all shadow-sm ${
-                              limitsData.daily.percentage >= 100 ? 'bg-linear-to-r from-red-500 to-red-600' :
-                              limitsData.daily.percentage >= 90 ? 'bg-linear-to-r from-orange-500 to-orange-600' :
-                              limitsData.daily.percentage >= 80 ? 'bg-linear-to-r from-yellow-500 to-yellow-600' :
-                              'bg-linear-to-r from-green-500 to-green-600'
+                              limitsData.daily.percentage >= 100 ? 'bg-gradient-to-r from-red-500 to-red-600' :
+                              limitsData.daily.percentage >= 90 ? 'bg-gradient-to-r from-orange-500 to-orange-600' :
+                              limitsData.daily.percentage >= 80 ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' :
+                              'bg-gradient-to-r from-green-500 to-green-600'
                             }`}
                             style={{ width: `${Math.min(100, limitsData.daily.percentage)}%` }}
                           ></div>
@@ -496,7 +496,7 @@ const Account = () => {
 
                     {/* Savings Goal */}
                     {limitsData.savings && limitsData.savings.goal > 0 && (
-                      <div className='p-4 bg-linear-to-br from-green-50 to-green-100 rounded-xl border-2 border-green-200 shadow-md hover:shadow-lg transition-all'>
+                      <div className='p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-xl border-2 border-green-200 shadow-md hover:shadow-lg transition-all'>
                         <div className='flex justify-between items-center mb-2'>
                           <span className='font-bold text-green-900 flex items-center'>
                             <i className="ri-piggy-bank-line mr-2 text-xl"></i>
@@ -508,7 +508,7 @@ const Account = () => {
                         </div>
                         <div className='w-full bg-gray-300 rounded-full h-3 mb-2 shadow-inner'>
                           <div
-                            className='h-3 rounded-full bg-linear-to-r from-green-500 to-green-600 transition-all shadow-sm'
+                            className='h-3 rounded-full bg-gradient-to-r from-green-500 to-green-600 transition-all shadow-sm'
                             style={{ width: `${Math.min(100, limitsData.savings.percentage)}%` }}
                           ></div>
                         </div>

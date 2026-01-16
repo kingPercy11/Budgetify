@@ -93,7 +93,7 @@ const AddExpense = ({ isOpen, onClose, onExpenseAdded }) => {
 
   return (
     <div className='fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50'>
-      <div className='bg-linear-to-br from-blue-50 to-blue-100 rounded-3xl shadow-2xl p-8 w-full max-w-md mx-4 mt-18 relative border border-blue-200'>
+      <div className='bg-gradient-to-br from-blue-50 to-blue-100 rounded-3xl shadow-2xl p-8 w-full max-w-md mx-4 mt-18 relative border border-blue-200'>
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -218,7 +218,7 @@ const AddExpense = ({ isOpen, onClose, onExpenseAdded }) => {
             </button>
             <button
               type='submit'
-              className='flex-1 px-6 py-3 bg-linear-to-r from-green-500 to-green-600 text-white font-bold rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105'
+              className='flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white font-bold rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105'
             >
               Add Expense
             </button>

@@ -25,7 +25,7 @@ const Start = () => {
                         </p>
                         <Link 
                             to='/login' 
-                            className='inline-flex items-center justify-center px-12 py-4 bg-linear-to-r from-green-400 to-green-500 text-white text-lg font-bold rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 active:scale-95 hover:from-green-500 hover:to-green-600'
+                            className='inline-flex items-center justify-center px-12 py-4 bg-gradient-to-r from-green-400 to-green-500 text-white text-lg font-bold rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 active:scale-95 hover:from-green-500 hover:to-green-600'
                         >
                             Get Started
                         </Link>

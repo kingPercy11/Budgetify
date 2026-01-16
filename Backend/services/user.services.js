@@ -35,7 +35,7 @@ module.exports.generatePasswordResetToken = async (email) => {
     
     await user.save();
     
-    return resetToken;
+    return { resetToken, username: user.username };
 };
 
 // Reset password

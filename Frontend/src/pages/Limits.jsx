@@ -183,7 +183,7 @@ const Limits = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-cover bg-center bg-[url('/Home.png')] flex items-center justify-center">
-        <div className="absolute inset-0 bg-linear-to-b from-blue-900/40 via-blue-600/30 to-blue-900/40 backdrop-blur-sm"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-900/40 via-blue-600/30 to-blue-900/40 backdrop-blur-sm"></div>
         <div className="relative z-10 text-white text-2xl">
           <i className="ri-loader-4-line animate-spin text-4xl"></i>
           <p className="mt-4">Loading limits...</p>

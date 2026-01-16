@@ -9,7 +9,7 @@ const TopCategories = ({ categoryData }) => {
       </h3>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {categoryData.labels.slice(0, 3).map((label, index) => (
-          <div key={index} className="flex items-center justify-between p-4 bg-linear-to-r from-blue-50 to-blue-100 rounded-lg">
+          <div key={index} className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg">
             <div>
               <p className="text-sm text-gray-600 font-semibold">#{index + 1} {label}</p>
               <p className="text-2xl font-bold text-blue-900">₹{categoryData.values[index].toFixed(0)}</p>

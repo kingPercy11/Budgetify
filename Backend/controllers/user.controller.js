@@ -191,14 +191,19 @@ module.exports.forgotPassword = async(req,res,next) => {
     try {
         const { email } = req.body;
         
-        // Generate reset token
-        const resetToken = await userService.generatePasswordResetToken(email);
+        // Generate reset token and get username
+        const { resetToken, username } = await userService.generatePasswordResetToken(email);
         
-        // Send email with reset token
-        await emailService.sendPasswordResetEmail(email, resetToken);
+        // NOTE: Nodemailer code kept but not used for forgot password
+        // Email sending now handled by EmailJS on frontend
+        // await emailService.sendPasswordResetEmail(email, resetToken);
         
+        // Return token and username to frontend for EmailJS to send
         res.status(200).json({ 
-            message: 'Password reset link has been sent to your email' 
+            message: 'Password reset token generated',
+            resetToken: resetToken,
+            username: username,
+            email: email
         });
     } catch (error) {
         console.error('Forgot password error:', error);
@@ -208,7 +213,7 @@ module.exports.forgotPassword = async(req,res,next) => {
                 message: 'If an account exists with this email, a password reset link will be sent' 
             });
         }
-        res.status(500).json({ message: 'Error sending reset email. Please try again later.', error: error.message });
+        res.status(500).json({ message: 'Error generating reset token. Please try again later.', error: error.message });
     }
 }
 

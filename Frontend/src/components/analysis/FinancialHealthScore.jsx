@@ -2,7 +2,7 @@ import React from 'react'
 
 const FinancialHealthScore = ({ healthScore }) => {
   return (
-    <div className="bg-linear-to-r from-blue-500 to-purple-600 rounded-xl p-6 shadow-lg mb-6 text-white">
+    <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-6 shadow-lg mb-6 text-white">
       <h3 className="text-2xl font-bold mb-4">
         <i className="ri-heart-pulse-line mr-2"></i>
         Financial Health Score
