@@ -77,7 +77,7 @@ const AccountDetailsCard = ({
           )}
         </div>
         {!isEditingUsername ? (
-          <p className='text-2xl font-bold text-gray-800'>{user.username}</p>
+          <p className='text-2xl font-bold text-gray-800 break-words overflow-wrap-anywhere'>{user.username}</p>
         ) : (
           <div className='space-y-3'>
             <input
@@ -122,7 +122,7 @@ const AccountDetailsCard = ({
           )}
         </div>
         {!isEditingEmail ? (
-          <p className='text-2xl font-bold text-gray-800'>{user.email}</p>
+          <p className='text-2xl font-bold text-gray-800 break-all overflow-hidden'>{user.email}</p>
         ) : (
           <div className='space-y-3'>
             <input
