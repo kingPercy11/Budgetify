@@ -180,18 +180,28 @@ const Limits = () => {
     other: 'ri-more-2-line'
   }
 
+  // if (loading) {
+  //   return (
+  //     <div className="min-h-screen bg-cover bg-center bg-[url('/Home.png')] flex items-center justify-center">
+  //       <div className="absolute inset-0 bg-gradient-to-b from-blue-900/40 via-blue-600/30 to-blue-900/40 backdrop-blur-sm"></div>
+  //       <div className="relative z-10 text-white text-2xl">
+  //         <i className="ri-loader-4-line animate-spin text-4xl"></i>
+  //         <p className="mt-4">Loading limits...</p>
+  //       </div>
+  //     </div>
+  //   )
+  // }
   if (loading) {
     return (
-      <div className="min-h-screen bg-cover bg-center bg-[url('/Home.png')] flex items-center justify-center">
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-900/40 via-blue-600/30 to-blue-900/40 backdrop-blur-sm"></div>
-        <div className="relative z-10 text-white text-2xl">
-          <i className="ri-loader-4-line animate-spin text-4xl"></i>
-          <p className="mt-4">Loading limits...</p>
+      <div className="min-h-screen bg-cover bg-center bg-[url('/Home.png')] bg-fixed flex items-center justify-center relative">
+        <div className="fixed inset-0 bg-gradient-to-b from-blue-900/50 via-blue-600/40 to-blue-900/50 backdrop-blur-md"></div>
+        <div className="relative z-10 bg-white/90 rounded-xl p-8 shadow-2xl">
+          <i className="ri-loader-4-line animate-spin text-5xl text-blue-600 block mb-4 text-center"></i>
+          <div className="text-blue-900 font-semibold text-xl">Loading Limits...</div>
         </div>
       </div>
     )
   }
-
   return (
     <div className="min-h-screen bg-cover bg-center bg-[url('/Home.png')] bg-fixed">
       <div className="fixed inset-0 bg-linear-to-b from-blue-900/40 via-blue-600/30 to-blue-900/40 backdrop-blur-md"></div>
