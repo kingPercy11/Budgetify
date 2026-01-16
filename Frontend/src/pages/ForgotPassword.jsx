@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
+import { sendPasswordResetEmail, isEmailJSConfigured } from '../services/emailjs.service'
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('')
@@ -14,16 +15,34 @@ const ForgotPassword = () => {
     setMessage('')
     setError('')
 
+    // Check if EmailJS is configured
+    if (!isEmailJSConfigured()) {
+      setError('Email service is not configured. Please contact administrator.')
+      setLoading(false)
+      return
+    }
+
     try {
+      // Step 1: Generate reset token from backend
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/users/forgot-password`,
         { email }
       )
       
-      setMessage(response.data.message)
+      const { resetToken, username } = response.data
+      
+      // Step 2: Send email via EmailJS with username
+      await sendPasswordResetEmail(email, resetToken, username)
+      
+      setMessage('Password reset link has been sent to your email!')
       setEmail('')
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to send reset email. Please try again.')
+      console.error('Forgot password error:', err)
+      if (err.message && err.message.includes('Failed to send email')) {
+        setError('Failed to send reset email. Please check your email address and try again.')
+      } else {
+        setError(err.response?.data?.message || 'Failed to send reset email. Please try again.')
+      }
     } finally {
       setLoading(false)
     }
