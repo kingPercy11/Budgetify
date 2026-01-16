@@ -227,10 +227,7 @@ module.exports.resetPassword = async(req,res,next) => {
         const { token, newPassword } = req.body;
         
         // Reset password
-        const user = await userService.resetPassword(token, newPassword);
-        
-        // Send confirmation email
-        await emailService.sendPasswordResetConfirmation(user.email);
+        await userService.resetPassword(token, newPassword);
         
         res.status(200).json({ 
             message: 'Password has been reset successfully. You can now login with your new password.' 
