@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import { sendBudgetAlertEmail } from '../services/emailjs.service'
 
 const AddExpense = ({ isOpen, onClose, onExpenseAdded }) => {
   const [amount, setAmount] = useState('')
@@ -67,23 +66,6 @@ const AddExpense = ({ isOpen, onClose, onExpenseAdded }) => {
       )
 
       setSuccessMessage('Expense added successfully!')
-      
-      // Send email alerts in background (non-blocking)
-      if (response.data.alerts && response.data.alerts.hasAlerts) {
-        const { alerts, userEmail, enableEmailAlerts } = response.data.alerts;
-        
-        // Send email alerts via EmailJS asynchronously (don't await)
-        if (enableEmailAlerts && userEmail && alerts.length > 0) {
-          // Run in background without blocking UI
-          Promise.all(
-            alerts.map(alert => 
-              sendBudgetAlertEmail(userEmail, alert)
-                .then(() => console.log('Budget alert email sent for:', alert.category))
-                .catch(err => console.error('Failed to send budget alert email:', err))
-            )
-          ).catch(err => console.error('Error sending alert emails:', err));
-        }
-      }
       
       // Reset form
       setAmount('')
