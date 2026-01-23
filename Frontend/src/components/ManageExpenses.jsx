@@ -7,6 +7,8 @@ const ManageExpenses = () => {
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('all')
+  const [typeFilter, setTypeFilter] = useState('all')
+  const [searchQuery, setSearchQuery] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [refreshTrigger, setRefreshTrigger] = useState(0)
 
@@ -114,6 +116,32 @@ const ManageExpenses = () => {
             </select>
           </div>
 
+          {/* Type Filter */}
+          <div className='flex flex-col gap-1'>
+            <label className='text-xs font-semibold text-blue-900'>Type</label>
+            <select 
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value)}
+              className='px-3 py-2 rounded-lg border border-blue-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm cursor-pointer'
+            >
+              <option value='all'>All Types</option>
+              <option value='debit'>Debit (Expense)</option>
+              <option value='credit'>Credit (Income)</option>
+            </select>
+          </div>
+
+          {/* Search Filter */}
+          <div className='flex flex-col gap-1'>
+            <label className='text-xs font-semibold text-blue-900'>Search</label>
+            <input 
+              type='text'
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder='Search by description...'
+              className='px-3 py-2 rounded-lg border border-blue-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm'
+            />
+          </div>
+
           {/* Custom Date Range - Show only when Custom is selected */}
           {filterPeriod === 'custom' && (
             <>
@@ -154,6 +182,8 @@ const ManageExpenses = () => {
         startDate={dateRange.start} 
         endDate={dateRange.end}
         categoryFilter={categoryFilter}
+        typeFilter={typeFilter}
+        searchQuery={searchQuery}
         refreshTrigger={refreshTrigger}
       />
 

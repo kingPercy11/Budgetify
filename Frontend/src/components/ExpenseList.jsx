@@ -4,7 +4,7 @@ import { UserDataContext } from '../context/UserContext'
 import UpdateExpense from './UpdateExpense'
 import DeleteConfirmation from './DeleteConfirmation'
 
-const ExpenseList = ({ startDate, endDate, categoryFilter, refreshTrigger }) => {
+const ExpenseList = ({ startDate, endDate, categoryFilter, typeFilter, searchQuery, refreshTrigger }) => {
   const [expenses, setExpenses] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -16,7 +16,7 @@ const ExpenseList = ({ startDate, endDate, categoryFilter, refreshTrigger }) => 
 
   useEffect(() => {
     fetchExpenses()
-  }, [startDate, endDate, categoryFilter, refreshTrigger])
+  }, [startDate, endDate, categoryFilter, typeFilter, searchQuery, refreshTrigger])
 
   const fetchExpenses = async () => {
     if (!user?.username) return
@@ -51,6 +51,20 @@ const ExpenseList = ({ startDate, endDate, categoryFilter, refreshTrigger }) => 
       if (categoryFilter && categoryFilter !== 'all') {
         filteredExpenses = filteredExpenses.filter(expense => 
           expense.category === categoryFilter
+        )
+      }
+      
+      // Apply type filter if provided
+      if (typeFilter && typeFilter !== 'all') {
+        filteredExpenses = filteredExpenses.filter(expense => 
+          expense.type === typeFilter
+        )
+      }
+      
+      // Apply search filter if provided
+      if (searchQuery && searchQuery.trim() !== '') {
+        filteredExpenses = filteredExpenses.filter(expense => 
+          expense.description?.toLowerCase().includes(searchQuery.toLowerCase())
         )
       }
       
