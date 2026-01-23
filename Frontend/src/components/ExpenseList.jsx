@@ -4,7 +4,7 @@ import { UserDataContext } from '../context/UserContext'
 import UpdateExpense from './UpdateExpense'
 import DeleteConfirmation from './DeleteConfirmation'
 
-const ExpenseList = ({ startDate, endDate, refreshTrigger }) => {
+const ExpenseList = ({ startDate, endDate, categoryFilter, refreshTrigger }) => {
   const [expenses, setExpenses] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -16,7 +16,7 @@ const ExpenseList = ({ startDate, endDate, refreshTrigger }) => {
 
   useEffect(() => {
     fetchExpenses()
-  }, [startDate, endDate, refreshTrigger])
+  }, [startDate, endDate, categoryFilter, refreshTrigger])
 
   const fetchExpenses = async () => {
     if (!user?.username) return
@@ -45,6 +45,13 @@ const ExpenseList = ({ startDate, endDate, refreshTrigger }) => {
           if (endDate && new Date(endDate) < expenseDate) return false
           return true
         })
+      }
+      
+      // Apply category filter if provided
+      if (categoryFilter && categoryFilter !== 'all') {
+        filteredExpenses = filteredExpenses.filter(expense => 
+          expense.category === categoryFilter
+        )
       }
       
       // Sort by date descending (newest first)

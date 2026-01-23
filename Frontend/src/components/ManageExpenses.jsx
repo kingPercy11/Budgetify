@@ -6,6 +6,7 @@ const ManageExpenses = () => {
   const [filterPeriod, setFilterPeriod] = useState('all')
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
+  const [categoryFilter, setCategoryFilter] = useState('all')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [refreshTrigger, setRefreshTrigger] = useState(0)
 
@@ -93,6 +94,26 @@ const ManageExpenses = () => {
             </select>
           </div>
 
+          {/* Category Filter */}
+          <div className='flex flex-col gap-1'>
+            <label className='text-xs font-semibold text-blue-900'>Category</label>
+            <select 
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              className='px-3 py-2 rounded-lg border border-blue-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm cursor-pointer'
+            >
+              <option value='all'>All Categories</option>
+              <option value='food'>Food & Dining</option>
+              <option value='transport'>Transportation</option>
+              <option value='shopping'>Shopping</option>
+              <option value='entertainment'>Entertainment</option>
+              <option value='bills'>Bills & Utilities</option>
+              <option value='healthcare'>Healthcare</option>
+              <option value='education'>Education</option>
+              <option value='other'>Other</option>
+            </select>
+          </div>
+
           {/* Custom Date Range - Show only when Custom is selected */}
           {filterPeriod === 'custom' && (
             <>
@@ -132,6 +153,7 @@ const ManageExpenses = () => {
       <ExpenseList 
         startDate={dateRange.start} 
         endDate={dateRange.end}
+        categoryFilter={categoryFilter}
         refreshTrigger={refreshTrigger}
       />
 
