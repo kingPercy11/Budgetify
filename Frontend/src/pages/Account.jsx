@@ -33,6 +33,7 @@ import PageHeader from '../components/shared/PageHeader'
 import AccountDetailsCard from '../components/account/AccountDetailsCard'
 import FinancialOverviewCard from '../components/account/FinancialOverviewCard'
 import DailyActivityChart from '../components/account/DailyActivityChart'
+import InstallPWA, { usePWAInstall } from '../components/shared/InstallPWA'
 
 const Account = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -41,19 +42,21 @@ const Account = () => {
   const [isEditingEmail, setIsEditingEmail] = useState(false)
   const [isEditingPassword, setIsEditingPassword] = useState(false)
   const [isEditingProfile, setIsEditingProfile] = useState(false)
-  
+  const [showInstallModal, setShowInstallModal] = useState(false)
+  const { canInstall, isInstalled } = usePWAInstall()
+
   const [newUsername, setNewUsername] = useState('')
   const [newEmail, setNewEmail] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [currentPassword, setCurrentPassword] = useState('')
-  
+
   const [age, setAge] = useState('')
   const [city, setCity] = useState('')
   const [state, setState] = useState('')
   const [country, setCountry] = useState('')
   const [phoneNumber, setPhoneNumber] = useState('')
-  
+
   // Country list with flags
   const countries = [
     { code: 'IN', name: 'India', flag: '🇮🇳' },
@@ -87,11 +90,11 @@ const Account = () => {
     { code: 'NZ', name: 'New Zealand', flag: '🇳🇿' },
     { code: 'PT', name: 'Portugal', flag: '🇵🇹' }
   ]
-  
+
   const [showCurrentPassword, setShowCurrentPassword] = useState(false)
   const [showNewPassword, setShowNewPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  
+
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const [expenses, setExpenses] = useState([])
@@ -106,22 +109,22 @@ const Account = () => {
   })
 
   useEffect(() => {
-    gsap.fromTo('.header-logo', 
+    gsap.fromTo('.header-logo',
       { x: -100, opacity: 0 },
       { x: 0, opacity: 1, duration: 1, ease: 'power3.out' }
     )
 
-    gsap.fromTo('.header-menu', 
+    gsap.fromTo('.header-menu',
       { x: 100, opacity: 0 },
       { x: 0, opacity: 1, duration: 1, ease: 'power3.out' }
     )
 
-    gsap.fromTo('.profile-card', 
+    gsap.fromTo('.profile-card',
       { scale: 0, opacity: 0 },
       { scale: 1, opacity: 1, duration: 1, ease: 'back.out(1.7)', delay: 0.3 }
     )
 
-    gsap.fromTo('.stats-card', 
+    gsap.fromTo('.stats-card',
       { y: 50, opacity: 0 },
       { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', delay: 0.5, stagger: 0.1 }
     )
@@ -152,12 +155,12 @@ const Account = () => {
         `${import.meta.env.VITE_BASE_URL}/expenditures/user/${user.username}`,
         { headers: { Authorization: `Bearer ${token}` } }
       )
-      
+
       const allExpenses = response.data.map(exp => ({
         ...exp,
         type: exp.type || 'debit'
       }))
-      
+
       setExpenses(allExpenses)
       calculateStats(allExpenses)
     } catch (err) {
@@ -168,17 +171,17 @@ const Account = () => {
   const calculateStats = (expenseData) => {
     const now = new Date()
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
-    
+
     const recentExpenses = expenseData.filter(e => new Date(e.date) >= thirtyDaysAgo)
-    
+
     const totalIncome = recentExpenses
       .filter(e => e.type === 'credit')
       .reduce((sum, e) => sum + e.amount, 0)
-    
+
     const totalExpenses = recentExpenses
       .filter(e => e.type === 'debit')
       .reduce((sum, e) => sum + e.amount, 0)
-    
+
     const netBalance = totalIncome - totalExpenses
     const savingsRate = totalIncome > 0 ? ((netBalance / totalIncome) * 100) : 0
     const avgDailySpend = totalExpenses / 30
@@ -197,7 +200,7 @@ const Account = () => {
     const dailyData = {}
     const now = new Date()
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
-    
+
     const recentExpenses = expenses.filter(e => new Date(e.date) >= thirtyDaysAgo)
     const sortedExpenses = [...recentExpenses].sort((a, b) => new Date(a.date) - new Date(b.date))
 
@@ -206,7 +209,7 @@ const Account = () => {
       if (!dailyData[day]) {
         dailyData[day] = { income: 0, expenses: 0 }
       }
-      
+
       if (expense.type === 'credit') {
         dailyData[day].income += expense.amount
       } else {
@@ -221,7 +224,7 @@ const Account = () => {
       expenses: labels.map(day => dailyData[day].expenses)
     }
   }
-  
+
   const handleUpdateUsername = async () => {
     try {
       const token = localStorage.getItem('token')
@@ -240,7 +243,7 @@ const Account = () => {
       setTimeout(() => setError(''), 3000)
     }
   }
-  
+
   const handleUpdateEmail = async () => {
     try {
       const token = localStorage.getItem('token')
@@ -259,7 +262,7 @@ const Account = () => {
       setTimeout(() => setError(''), 3000)
     }
   }
-  
+
   const handleUpdatePassword = async () => {
     if (newPassword !== confirmPassword) {
       setError('Passwords do not match')
@@ -295,7 +298,7 @@ const Account = () => {
       const token = localStorage.getItem('token')
       const response = await axios.put(
         `${import.meta.env.VITE_BASE_URL}/users/update-profile`,
-        { 
+        {
           age: age ? parseInt(age) : undefined,
           state,
           country,
@@ -316,221 +319,248 @@ const Account = () => {
   return (
     <div className="min-h-screen bg-cover bg-center bg-[url('/Home.png')] bg-fixed">
       <div className="fixed inset-0 bg-gradient-to-b from-blue-900/50 via-blue-600/40 to-blue-900/50 backdrop-blur-md"></div>
-        
+
       <PageHeader isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
-        
-        {/* Content */}
-        <div className="relative z-10 pt-24 px-4 pb-16">
-          <div className='max-w-7xl mx-auto'>
-            {/* Header */}
-            <div className='text-center mb-8'>
-              <i className="ri-account-circle-fill text-7xl text-white drop-shadow-2xl mb-4 block"></i>
-              <h1 className='text-5xl font-bold text-white drop-shadow-lg mb-2'>
-                My Profile
-              </h1>
-              <p className='text-blue-100 text-lg drop-shadow'>Welcome back, {user.username}!</p>
-            </div>
 
-            {/* Profile Information Section */}
-            <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 items-start mb-6'>
-              {/* Account Details Card */}
-              <AccountDetailsCard 
-                user={user}
-                message={message}
-                error={error}
-                isEditingUsername={isEditingUsername}
-                setIsEditingUsername={setIsEditingUsername}
-                newUsername={newUsername}
-                setNewUsername={setNewUsername}
-                handleUpdateUsername={handleUpdateUsername}
-                isEditingEmail={isEditingEmail}
-                setIsEditingEmail={setIsEditingEmail}
-                newEmail={newEmail}
-                setNewEmail={setNewEmail}
-                handleUpdateEmail={handleUpdateEmail}
-                isEditingPassword={isEditingPassword}
-                setIsEditingPassword={setIsEditingPassword}
-                currentPassword={currentPassword}
-                setCurrentPassword={setCurrentPassword}
-                newPassword={newPassword}
-                setNewPassword={setNewPassword}
-                confirmPassword={confirmPassword}
-                setConfirmPassword={setConfirmPassword}
-                showCurrentPassword={showCurrentPassword}
-                setShowCurrentPassword={setShowCurrentPassword}
-                showNewPassword={showNewPassword}
-                setShowNewPassword={setShowNewPassword}
-                showConfirmPassword={showConfirmPassword}
-                setShowConfirmPassword={setShowConfirmPassword}
-                handleUpdatePassword={handleUpdatePassword}
-                isEditingProfile={isEditingProfile}
-                setIsEditingProfile={setIsEditingProfile}
-                age={age}
-                setAge={setAge}
-                state={state}
-                setState={setState}
-                country={country}
-                setCountry={setCountry}
-                phoneNumber={phoneNumber}
-                setPhoneNumber={setPhoneNumber}
-                setCity={setCity}
-                handleUpdateProfile={handleUpdateProfile}
-                countries={countries}
-              />
+      {/* Content */}
+      <div className="relative z-10 pt-24 px-4 pb-16">
+        <div className='max-w-7xl mx-auto'>
+          {/* Header */}
+          <div className='text-center mb-8'>
+            <i className="ri-account-circle-fill text-7xl text-white drop-shadow-2xl mb-4 block"></i>
+            <h1 className='text-5xl font-bold text-white drop-shadow-lg mb-2'>
+              My Profile
+            </h1>
+            <p className='text-blue-100 text-lg drop-shadow'>Welcome back, {user.username}!</p>
+          </div>
 
-              <div className='space-y-6'>
-                {/* Financial Overview Card */}
-                <FinancialOverviewCard stats={stats} />
-              </div>
-            </div>
+          {/* Profile Information Section */}
+          <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 items-start mb-6'>
+            {/* Account Details Card */}
+            <AccountDetailsCard
+              user={user}
+              message={message}
+              error={error}
+              isEditingUsername={isEditingUsername}
+              setIsEditingUsername={setIsEditingUsername}
+              newUsername={newUsername}
+              setNewUsername={setNewUsername}
+              handleUpdateUsername={handleUpdateUsername}
+              isEditingEmail={isEditingEmail}
+              setIsEditingEmail={setIsEditingEmail}
+              newEmail={newEmail}
+              setNewEmail={setNewEmail}
+              handleUpdateEmail={handleUpdateEmail}
+              isEditingPassword={isEditingPassword}
+              setIsEditingPassword={setIsEditingPassword}
+              currentPassword={currentPassword}
+              setCurrentPassword={setCurrentPassword}
+              newPassword={newPassword}
+              setNewPassword={setNewPassword}
+              confirmPassword={confirmPassword}
+              setConfirmPassword={setConfirmPassword}
+              showCurrentPassword={showCurrentPassword}
+              setShowCurrentPassword={setShowCurrentPassword}
+              showNewPassword={showNewPassword}
+              setShowNewPassword={setShowNewPassword}
+              showConfirmPassword={showConfirmPassword}
+              setShowConfirmPassword={setShowConfirmPassword}
+              handleUpdatePassword={handleUpdatePassword}
+              isEditingProfile={isEditingProfile}
+              setIsEditingProfile={setIsEditingProfile}
+              age={age}
+              setAge={setAge}
+              state={state}
+              setState={setState}
+              country={country}
+              setCountry={setCountry}
+              phoneNumber={phoneNumber}
+              setPhoneNumber={setPhoneNumber}
+              setCity={setCity}
+              handleUpdateProfile={handleUpdateProfile}
+              countries={countries}
+            />
 
-            {/* Budget Limits and Daily Activity Section */}
-            <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 items-start mb-6'>
-              {/* Budget Limits Progress */}
-              {limitsData && limitsData.limits && (
-                <div className='stats-card bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-6'>
-                  <div className='flex items-center justify-between mb-6'>
-                    <h2 className='text-2xl font-bold text-blue-900 flex items-center'>
-                      <i className="ri-funds-line mr-2 text-3xl"></i>
-                      Budget Limits & Progress
-                    </h2>
-                    <Link 
-                      to='/limits' 
-                      className='bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-xl flex items-center transition-all shadow-lg hover:shadow-xl text-sm'
-                    >
-                      <i className="ri-settings-3-line mr-1"></i>
-                      Manage
-                    </Link>
-                  </div>
-
-                  <div className='space-y-4'>
-                    {/* Monthly Budget */}
-                    {limitsData.monthly && limitsData.monthly.budget > 0 && (
-                      <div className='p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border-2 border-blue-200 shadow-md hover:shadow-lg transition-all'>
-                        <div className='flex justify-between items-center mb-2'>
-                          <span className='font-bold text-blue-900 flex items-center'>
-                            <i className="ri-calendar-line mr-2 text-xl"></i>
-                            Monthly Budget
-                          </span>
-                          <span className='text-sm font-bold text-blue-700 bg-white px-2 py-1 rounded-lg'>
-                            {limitsData.monthly.percentage.toFixed(0)}%
-                          </span>
-                        </div>
-                        <div className='w-full bg-gray-300 rounded-full h-3 mb-2 shadow-inner'>
-                          <div
-                            className={`h-3 rounded-full transition-all shadow-sm ${
-                              limitsData.monthly.percentage >= 100 ? 'bg-gradient-to-r from-red-500 to-red-600' :
-                              limitsData.monthly.percentage >= 90 ? 'bg-gradient-to-r from-orange-500 to-orange-600' :
-                              limitsData.monthly.percentage >= 80 ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' :
-                              'bg-gradient-to-r from-green-500 to-green-600'
-                            }`}
-                            style={{ width: `${Math.min(100, limitsData.monthly.percentage)}%` }}
-                          ></div>
-                        </div>
-                        <div className='flex justify-between text-xs text-blue-800 font-medium'>
-                          <span>₹{limitsData.monthly.totalSpent.toFixed(0)} spent</span>
-                          <span>₹{limitsData.monthly.remaining.toFixed(0)} left</span>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Weekly Limit */}
-                    {limitsData.weekly && limitsData.weekly.limit > 0 && (
-                      <div className='p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl border-2 border-purple-200 shadow-md hover:shadow-lg transition-all'>
-                        <div className='flex justify-between items-center mb-2'>
-                          <span className='font-bold text-purple-900 flex items-center'>
-                            <i className="ri-calendar-week-line mr-2 text-xl"></i>
-                            Weekly Limit
-                          </span>
-                          <span className='text-sm font-bold text-purple-700 bg-white px-2 py-1 rounded-lg'>
-                            {limitsData.weekly.percentage.toFixed(0)}%
-                          </span>
-                        </div>
-                        <div className='w-full bg-gray-300 rounded-full h-3 mb-2 shadow-inner'>
-                          <div
-                            className={`h-3 rounded-full transition-all shadow-sm ${
-                              limitsData.weekly.percentage >= 100 ? 'bg-gradient-to-r from-red-500 to-red-600' :
-                              limitsData.weekly.percentage >= 90 ? 'bg-gradient-to-r from-orange-500 to-orange-600' :
-                              limitsData.weekly.percentage >= 80 ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' :
-                              'bg-gradient-to-r from-green-500 to-green-600'
-                            }`}
-                            style={{ width: `${Math.min(100, limitsData.weekly.percentage)}%` }}
-                          ></div>
-                        </div>
-                        <div className='flex justify-between text-xs text-purple-800 font-medium'>
-                          <span>₹{limitsData.weekly.spent.toFixed(0)} spent</span>
-                          <span>₹{limitsData.weekly.remaining.toFixed(0)} left</span>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Daily Limit */}
-                    {limitsData.daily && limitsData.daily.limit > 0 && (
-                      <div className='p-4 bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl border-2 border-orange-200 shadow-md hover:shadow-lg transition-all'>
-                        <div className='flex justify-between items-center mb-2'>
-                          <span className='font-bold text-orange-900 flex items-center'>
-                            <i className="ri-sun-line mr-2 text-xl"></i>
-                            Daily Limit
-                          </span>
-                          <span className='text-sm font-bold text-orange-700 bg-white px-2 py-1 rounded-lg'>
-                            {limitsData.daily.percentage.toFixed(0)}%
-                          </span>
-                        </div>
-                        <div className='w-full bg-gray-300 rounded-full h-3 mb-2 shadow-inner'>
-                          <div
-                            className={`h-3 rounded-full transition-all shadow-sm ${
-                              limitsData.daily.percentage >= 100 ? 'bg-gradient-to-r from-red-500 to-red-600' :
-                              limitsData.daily.percentage >= 90 ? 'bg-gradient-to-r from-orange-500 to-orange-600' :
-                              limitsData.daily.percentage >= 80 ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' :
-                              'bg-gradient-to-r from-green-500 to-green-600'
-                            }`}
-                            style={{ width: `${Math.min(100, limitsData.daily.percentage)}%` }}
-                          ></div>
-                        </div>
-                        <div className='flex justify-between text-xs text-orange-800 font-medium'>
-                          <span>₹{limitsData.daily.spent.toFixed(0)} spent</span>
-                          <span>₹{limitsData.daily.remaining.toFixed(0)} left</span>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Savings Goal */}
-                    {limitsData.savings && limitsData.savings.goal > 0 && (
-                      <div className='p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-xl border-2 border-green-200 shadow-md hover:shadow-lg transition-all'>
-                        <div className='flex justify-between items-center mb-2'>
-                          <span className='font-bold text-green-900 flex items-center'>
-                            <i className="ri-piggy-bank-line mr-2 text-xl"></i>
-                            Savings Goal
-                          </span>
-                          <span className='text-sm font-bold text-green-700 bg-white px-2 py-1 rounded-lg'>
-                            {limitsData.savings.percentage.toFixed(0)}%
-                          </span>
-                        </div>
-                        <div className='w-full bg-gray-300 rounded-full h-3 mb-2 shadow-inner'>
-                          <div
-                            className='h-3 rounded-full bg-gradient-to-r from-green-500 to-green-600 transition-all shadow-sm'
-                            style={{ width: `${Math.min(100, limitsData.savings.percentage)}%` }}
-                          ></div>
-                        </div>
-                        <div className='flex justify-between text-xs text-green-800 font-medium'>
-                          <span>₹{Math.max(0, limitsData.savings.actual).toFixed(0)} saved</span>
-                          <span>₹{limitsData.savings.remaining.toFixed(0)} to go</span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* Daily Activity Chart */}
-              <DailyActivityChart 
-                getDailyBreakdown={getDailyBreakdown}
-                expenses={expenses}
-              />
+            <div className='space-y-6'>
+              {/* Financial Overview Card */}
+              <FinancialOverviewCard stats={stats} />
             </div>
           </div>
+
+          {/* Budget Limits and Daily Activity Section */}
+          <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 items-start mb-6'>
+            {/* Budget Limits Progress */}
+            {limitsData && limitsData.limits && (
+              <div className='stats-card bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-6'>
+                <div className='flex items-center justify-between mb-6'>
+                  <h2 className='text-2xl font-bold text-blue-900 flex items-center'>
+                    <i className="ri-funds-line mr-2 text-3xl"></i>
+                    Budget Limits & Progress
+                  </h2>
+                  <Link
+                    to='/limits'
+                    className='bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-xl flex items-center transition-all shadow-lg hover:shadow-xl text-sm'
+                  >
+                    <i className="ri-settings-3-line mr-1"></i>
+                    Manage
+                  </Link>
+                </div>
+
+                <div className='space-y-4'>
+                  {/* Monthly Budget */}
+                  {limitsData.monthly && limitsData.monthly.budget > 0 && (
+                    <div className='p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border-2 border-blue-200 shadow-md hover:shadow-lg transition-all'>
+                      <div className='flex justify-between items-center mb-2'>
+                        <span className='font-bold text-blue-900 flex items-center'>
+                          <i className="ri-calendar-line mr-2 text-xl"></i>
+                          Monthly Budget
+                        </span>
+                        <span className='text-sm font-bold text-blue-700 bg-white px-2 py-1 rounded-lg'>
+                          {limitsData.monthly.percentage.toFixed(0)}%
+                        </span>
+                      </div>
+                      <div className='w-full bg-gray-300 rounded-full h-3 mb-2 shadow-inner'>
+                        <div
+                          className={`h-3 rounded-full transition-all shadow-sm ${limitsData.monthly.percentage >= 100 ? 'bg-gradient-to-r from-red-500 to-red-600' :
+                            limitsData.monthly.percentage >= 90 ? 'bg-gradient-to-r from-orange-500 to-orange-600' :
+                              limitsData.monthly.percentage >= 80 ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' :
+                                'bg-gradient-to-r from-green-500 to-green-600'
+                            }`}
+                          style={{ width: `${Math.min(100, limitsData.monthly.percentage)}%` }}
+                        ></div>
+                      </div>
+                      <div className='flex justify-between text-xs text-blue-800 font-medium'>
+                        <span>₹{limitsData.monthly.totalSpent.toFixed(0)} spent</span>
+                        <span>₹{limitsData.monthly.remaining.toFixed(0)} left</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Weekly Limit */}
+                  {limitsData.weekly && limitsData.weekly.limit > 0 && (
+                    <div className='p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl border-2 border-purple-200 shadow-md hover:shadow-lg transition-all'>
+                      <div className='flex justify-between items-center mb-2'>
+                        <span className='font-bold text-purple-900 flex items-center'>
+                          <i className="ri-calendar-week-line mr-2 text-xl"></i>
+                          Weekly Limit
+                        </span>
+                        <span className='text-sm font-bold text-purple-700 bg-white px-2 py-1 rounded-lg'>
+                          {limitsData.weekly.percentage.toFixed(0)}%
+                        </span>
+                      </div>
+                      <div className='w-full bg-gray-300 rounded-full h-3 mb-2 shadow-inner'>
+                        <div
+                          className={`h-3 rounded-full transition-all shadow-sm ${limitsData.weekly.percentage >= 100 ? 'bg-gradient-to-r from-red-500 to-red-600' :
+                            limitsData.weekly.percentage >= 90 ? 'bg-gradient-to-r from-orange-500 to-orange-600' :
+                              limitsData.weekly.percentage >= 80 ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' :
+                                'bg-gradient-to-r from-green-500 to-green-600'
+                            }`}
+                          style={{ width: `${Math.min(100, limitsData.weekly.percentage)}%` }}
+                        ></div>
+                      </div>
+                      <div className='flex justify-between text-xs text-purple-800 font-medium'>
+                        <span>₹{limitsData.weekly.spent.toFixed(0)} spent</span>
+                        <span>₹{limitsData.weekly.remaining.toFixed(0)} left</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Daily Limit */}
+                  {limitsData.daily && limitsData.daily.limit > 0 && (
+                    <div className='p-4 bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl border-2 border-orange-200 shadow-md hover:shadow-lg transition-all'>
+                      <div className='flex justify-between items-center mb-2'>
+                        <span className='font-bold text-orange-900 flex items-center'>
+                          <i className="ri-sun-line mr-2 text-xl"></i>
+                          Daily Limit
+                        </span>
+                        <span className='text-sm font-bold text-orange-700 bg-white px-2 py-1 rounded-lg'>
+                          {limitsData.daily.percentage.toFixed(0)}%
+                        </span>
+                      </div>
+                      <div className='w-full bg-gray-300 rounded-full h-3 mb-2 shadow-inner'>
+                        <div
+                          className={`h-3 rounded-full transition-all shadow-sm ${limitsData.daily.percentage >= 100 ? 'bg-gradient-to-r from-red-500 to-red-600' :
+                            limitsData.daily.percentage >= 90 ? 'bg-gradient-to-r from-orange-500 to-orange-600' :
+                              limitsData.daily.percentage >= 80 ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' :
+                                'bg-gradient-to-r from-green-500 to-green-600'
+                            }`}
+                          style={{ width: `${Math.min(100, limitsData.daily.percentage)}%` }}
+                        ></div>
+                      </div>
+                      <div className='flex justify-between text-xs text-orange-800 font-medium'>
+                        <span>₹{limitsData.daily.spent.toFixed(0)} spent</span>
+                        <span>₹{limitsData.daily.remaining.toFixed(0)} left</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Savings Goal */}
+                  {limitsData.savings && limitsData.savings.goal > 0 && (
+                    <div className='p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-xl border-2 border-green-200 shadow-md hover:shadow-lg transition-all'>
+                      <div className='flex justify-between items-center mb-2'>
+                        <span className='font-bold text-green-900 flex items-center'>
+                          <i className="ri-piggy-bank-line mr-2 text-xl"></i>
+                          Savings Goal
+                        </span>
+                        <span className='text-sm font-bold text-green-700 bg-white px-2 py-1 rounded-lg'>
+                          {limitsData.savings.percentage.toFixed(0)}%
+                        </span>
+                      </div>
+                      <div className='w-full bg-gray-300 rounded-full h-3 mb-2 shadow-inner'>
+                        <div
+                          className='h-3 rounded-full bg-gradient-to-r from-green-500 to-green-600 transition-all shadow-sm'
+                          style={{ width: `${Math.min(100, limitsData.savings.percentage)}%` }}
+                        ></div>
+                      </div>
+                      <div className='flex justify-between text-xs text-green-800 font-medium'>
+                        <span>₹{Math.max(0, limitsData.savings.actual).toFixed(0)} saved</span>
+                        <span>₹{limitsData.savings.remaining.toFixed(0)} to go</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Daily Activity Chart */}
+            <DailyActivityChart
+              getDailyBreakdown={getDailyBreakdown}
+              expenses={expenses}
+            />
+          </div>
+
+          {/* Install App Card - shown if not already installed */}
+          {!isInstalled && (
+            <div className='max-w-md mx-auto mt-6'>
+              <div className='stats-card bg-gradient-to-br from-green-500/90 to-emerald-600/90 backdrop-blur-md rounded-2xl shadow-2xl p-6 border border-white/20'>
+                <div className='flex items-center gap-4'>
+                  <div className='w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center'>
+                    <i className="ri-smartphone-line text-3xl text-white"></i>
+                  </div>
+                  <div className='flex-1'>
+                    <h3 className='text-xl font-bold text-white mb-1'>Install Budgetify App</h3>
+                    <p className='text-green-100 text-sm'>Get quick access from your home screen</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowInstallModal(true)}
+                  className='w-full mt-4 py-3 px-6 bg-white hover:bg-green-50 text-green-700 font-bold rounded-xl transition-all shadow-lg flex items-center justify-center gap-2'
+                >
+                  <i className="ri-download-line text-xl"></i>
+                  Install Now
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Install PWA Modal */}
+      <InstallPWA
+        isOpen={showInstallModal}
+        onClose={() => setShowInstallModal(false)}
+      />
+    </div>
   )
 }
 
