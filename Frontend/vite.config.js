@@ -10,7 +10,7 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['Logo.png', 'Logo2.png', 'logo/favicon.ico', 'logo/apple-touch-icon.png'],
+      includeAssets: ['Logo2.png', 'logo/favicon.ico', 'logo/apple-touch-icon.png'],
       manifest: {
         name: 'Budgetify - Smart Budget Manager',
         short_name: 'Budgetify',
@@ -49,7 +49,9 @@ export default defineConfig({
         ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,woff,woff2}'],
+        // Exclude large files from precaching
+        globIgnores: ['**/Logo.png', '**/favicon.svg', '**/Home.png', '**/Home_copy.png'],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/cdn\.jsdelivr\.net\/.*/i,
