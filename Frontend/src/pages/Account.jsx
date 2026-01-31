@@ -57,23 +57,18 @@ const Account = () => {
   const [country, setCountry] = useState('')
   const [phoneNumber, setPhoneNumber] = useState('')
 
-  // Country list with flags
+  // Country list with flags (multi-timezone countries have separate entries)
   const countries = [
+    // Single timezone countries
     { code: 'IN', name: 'India', flag: '🇮🇳' },
-    { code: 'US', name: 'United States', flag: '🇺🇸' },
     { code: 'GB', name: 'United Kingdom', flag: '🇬🇧' },
-    { code: 'CA', name: 'Canada', flag: '🇨🇦' },
-    { code: 'AU', name: 'Australia', flag: '🇦🇺' },
     { code: 'DE', name: 'Germany', flag: '🇩🇪' },
     { code: 'FR', name: 'France', flag: '🇫🇷' },
     { code: 'JP', name: 'Japan', flag: '🇯🇵' },
     { code: 'CN', name: 'China', flag: '🇨🇳' },
-    { code: 'BR', name: 'Brazil', flag: '🇧🇷' },
-    { code: 'MX', name: 'Mexico', flag: '🇲🇽' },
     { code: 'IT', name: 'Italy', flag: '🇮🇹' },
     { code: 'ES', name: 'Spain', flag: '🇪🇸' },
     { code: 'KR', name: 'South Korea', flag: '🇰🇷' },
-    { code: 'RU', name: 'Russia', flag: '🇷🇺' },
     { code: 'SG', name: 'Singapore', flag: '🇸🇬' },
     { code: 'AE', name: 'UAE', flag: '🇦🇪' },
     { code: 'ZA', name: 'South Africa', flag: '🇿🇦' },
@@ -88,7 +83,48 @@ const Account = () => {
     { code: 'FI', name: 'Finland', flag: '🇫🇮' },
     { code: 'IE', name: 'Ireland', flag: '🇮🇪' },
     { code: 'NZ', name: 'New Zealand', flag: '🇳🇿' },
-    { code: 'PT', name: 'Portugal', flag: '🇵🇹' }
+    { code: 'PT', name: 'Portugal', flag: '🇵🇹' },
+
+    // USA - Multiple timezones
+    { code: 'US-ET', name: 'United States (Eastern, UTC-5)', flag: '🇺🇸' },
+    { code: 'US-CT', name: 'United States (Central, UTC-6)', flag: '🇺🇸' },
+    { code: 'US-MT', name: 'United States (Mountain, UTC-7)', flag: '🇺🇸' },
+    { code: 'US-PT', name: 'United States (Pacific, UTC-8)', flag: '🇺🇸' },
+    { code: 'US-AK', name: 'United States (Alaska, UTC-9)', flag: '🇺🇸' },
+    { code: 'US-HI', name: 'United States (Hawaii, UTC-10)', flag: '🇺🇸' },
+
+    // Canada - Multiple timezones
+    { code: 'CA-AT', name: 'Canada (Atlantic, UTC-4)', flag: '🇨🇦' },
+    { code: 'CA-ET', name: 'Canada (Eastern, UTC-5)', flag: '🇨🇦' },
+    { code: 'CA-CT', name: 'Canada (Central, UTC-6)', flag: '🇨🇦' },
+    { code: 'CA-MT', name: 'Canada (Mountain, UTC-7)', flag: '🇨🇦' },
+    { code: 'CA-PT', name: 'Canada (Pacific, UTC-8)', flag: '🇨🇦' },
+
+    // Australia - Multiple timezones
+    { code: 'AU-ET', name: 'Australia (Eastern, UTC+10)', flag: '🇦🇺' },
+    { code: 'AU-CT', name: 'Australia (Central, UTC+9:30)', flag: '🇦🇺' },
+    { code: 'AU-WT', name: 'Australia (Western, UTC+8)', flag: '🇦🇺' },
+
+    // Russia - Multiple timezones
+    { code: 'RU-MSK', name: 'Russia (Moscow, UTC+3)', flag: '🇷🇺' },
+    { code: 'RU-YEK', name: 'Russia (Yekaterinburg, UTC+5)', flag: '🇷🇺' },
+    { code: 'RU-NOV', name: 'Russia (Novosibirsk, UTC+7)', flag: '🇷🇺' },
+    { code: 'RU-VLA', name: 'Russia (Vladivostok, UTC+10)', flag: '🇷🇺' },
+
+    // Brazil - Multiple timezones
+    { code: 'BR-BRT', name: 'Brazil (Brasília, UTC-3)', flag: '🇧🇷' },
+    { code: 'BR-AMT', name: 'Brazil (Amazon, UTC-4)', flag: '🇧🇷' },
+    { code: 'BR-ACT', name: 'Brazil (Acre, UTC-5)', flag: '🇧🇷' },
+
+    // Mexico - Multiple timezones
+    { code: 'MX-CT', name: 'Mexico (Central, UTC-6)', flag: '🇲🇽' },
+    { code: 'MX-PT', name: 'Mexico (Pacific, UTC-7)', flag: '🇲🇽' },
+    { code: 'MX-NT', name: 'Mexico (Northwest, UTC-8)', flag: '🇲🇽' },
+
+    // Indonesia - Multiple timezones
+    { code: 'ID-WIB', name: 'Indonesia (Western, UTC+7)', flag: '🇮🇩' },
+    { code: 'ID-WITA', name: 'Indonesia (Central, UTC+8)', flag: '🇮🇩' },
+    { code: 'ID-WIT', name: 'Indonesia (Eastern, UTC+9)', flag: '🇮🇩' }
   ]
 
   const [showCurrentPassword, setShowCurrentPassword] = useState(false)
