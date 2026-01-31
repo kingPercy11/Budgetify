@@ -48,27 +48,27 @@ const AccountDetailsCard = ({
         <i className="ri-user-settings-line"></i>
         Account Details
       </h2>
-  
+
       {message && (
         <div className='bg-green-50 border border-green-200 text-green-700 p-4 rounded-xl mb-6 flex items-center gap-2'>
           <i className="ri-checkbox-circle-line text-xl"></i>
           <p className="text-sm font-semibold">{message}</p>
         </div>
       )}
-      
+
       {error && (
         <div className='bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl mb-6 flex items-center gap-2'>
           <i className="ri-error-warning-line text-xl"></i>
           <p className="text-sm font-semibold">{error}</p>
         </div>
       )}
-      
+
       {/* Username Section */}
       <div className='bg-blue-50 rounded-2xl p-6 mb-4 border border-blue-200'>
         <div className='flex items-center justify-between mb-2'>
           <label className='text-sm font-semibold text-gray-600 uppercase tracking-wide'>Username</label>
           {!isEditingUsername && (
-            <button 
+            <button
               onClick={() => setIsEditingUsername(true)}
               className='text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center gap-1'
             >
@@ -88,13 +88,13 @@ const AccountDetailsCard = ({
               className='w-full px-4 py-3 border border-blue-300 rounded-xl focus:ring-2 focus:ring-blue-400 outline-none'
             />
             <div className='flex gap-2'>
-              <button 
+              <button
                 onClick={handleUpdateUsername}
                 className='flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition'
               >
                 Update
               </button>
-              <button 
+              <button
                 onClick={() => {
                   setIsEditingUsername(false)
                   setNewUsername('')
@@ -112,6 +112,7 @@ const AccountDetailsCard = ({
       <div className='bg-blue-50 rounded-2xl p-6 mb-4 border border-blue-200'>
         <div className='flex items-center justify-between mb-2'>
           <label className='text-sm font-semibold text-gray-600 uppercase tracking-wide'>Email</label>
+          {/* Email edit button - commented out to prevent email changes
           {!isEditingEmail && (
             <button 
               onClick={() => setIsEditingEmail(true)}
@@ -120,10 +121,11 @@ const AccountDetailsCard = ({
               <i className="ri-edit-line"></i> Edit
             </button>
           )}
+          */}
         </div>
-        {!isEditingEmail ? (
-          <p className='text-2xl font-bold text-gray-800 break-all overflow-hidden'>{user.email}</p>
-        ) : (
+        <p className='text-2xl font-bold text-gray-800 break-all overflow-hidden'>{user.email}</p>
+        {/* Email edit form - commented out to prevent email changes
+        {isEditingEmail && (
           <div className='space-y-3'>
             <input
               type="email"
@@ -151,6 +153,7 @@ const AccountDetailsCard = ({
             </div>
           </div>
         )}
+        */}
       </div>
 
       {/* Password Section */}
@@ -158,7 +161,7 @@ const AccountDetailsCard = ({
         <div className='flex items-center justify-between mb-2'>
           <label className='text-sm font-semibold text-gray-600 uppercase tracking-wide'>Password</label>
           {!isEditingPassword && (
-            <button 
+            <button
               onClick={() => setIsEditingPassword(true)}
               className='text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center gap-1'
             >
@@ -219,13 +222,13 @@ const AccountDetailsCard = ({
               </button>
             </div>
             <div className='flex gap-2'>
-              <button 
+              <button
                 onClick={handleUpdatePassword}
                 className='flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition'
               >
                 Update Password
               </button>
-              <button 
+              <button
                 onClick={() => {
                   setIsEditingPassword(false)
                   setNewPassword('')
@@ -240,13 +243,13 @@ const AccountDetailsCard = ({
           </div>
         )}
       </div>
-      
+
       {/* Profile Details Section */}
       <div className='bg-blue-50 rounded-2xl p-6 border border-blue-200 mt-4'>
         <div className='flex items-center justify-between mb-2'>
           <label className='text-sm font-semibold text-gray-600 uppercase tracking-wide'>Profile Details</label>
           {!isEditingProfile && (
-            <button 
+            <button
               onClick={() => {
                 setIsEditingProfile(true)
                 setAge(user.age || '')
@@ -334,13 +337,13 @@ const AccountDetailsCard = ({
               />
             </div>
             <div className='flex gap-2 pt-2'>
-              <button 
+              <button
                 onClick={handleUpdateProfile}
                 className='flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition'
               >
                 Save
               </button>
-              <button 
+              <button
                 onClick={() => {
                   setIsEditingProfile(false)
                   setAge('')
