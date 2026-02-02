@@ -50,12 +50,12 @@ const UserSignup = () => {
     <div className="min-h-screen bg-cover bg-center bg-[url('/Home.png')] flex items-center justify-center p-6 relative">
       {/* Translucent overlay */}
       <div className="absolute inset-0 bg-blue-600/30 backdrop-blur-sm"></div>
-      
+
       <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md relative z-10">
         <Link to='/' className='block w-fit mx-auto mb-6'>
           <img className='w-64 hover:scale-105 transition-transform duration-300 drop-shadow-[0_0_30px_rgba(59,130,246,0.7)] hover:drop-shadow-[0_0_40px_rgba(59,130,246,1)]' src="/Logo.png" alt="Budgetify Logo" />
         </Link>
-        
+
         <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Create Account</h2>
 
         <form onSubmit={submitHandler}>
@@ -70,6 +70,9 @@ const UserSignup = () => {
               onChange={(e) => setUsername(e.target.value)}
               minLength={3}
             />
+            <p className='text-xs text-amber-600 mt-2 flex items-center gap-1'>
+              <i className="ri-information-line"></i> Choose carefully - username cannot be changed later
+            </p>
           </div>
 
           <div className="mb-4">
@@ -91,7 +94,7 @@ const UserSignup = () => {
                 className='bg-gray-100 rounded-xl px-4 py-3 pr-12 border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 w-full text-base outline-none transition'
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                required 
+                required
                 type={showPassword ? "text" : "password"}
                 placeholder='Create a password (min 6 characters)'
                 minLength={6}
@@ -123,7 +126,7 @@ const UserSignup = () => {
         <p className='text-center mt-6 text-gray-600'>
           Already have an account? <Link to='/login' className='text-blue-600 font-semibold hover:underline'>Login here</Link>
         </p>
-        
+
         <div className="mt-6">
           <p className='text-xs text-gray-500 text-center leading-tight'>
             This site is protected by reCAPTCHA and the{' '}

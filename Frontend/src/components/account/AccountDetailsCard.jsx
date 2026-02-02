@@ -67,6 +67,7 @@ const AccountDetailsCard = ({
       <div className='bg-blue-50 rounded-2xl p-6 mb-4 border border-blue-200'>
         <div className='flex items-center justify-between mb-2'>
           <label className='text-sm font-semibold text-gray-600 uppercase tracking-wide'>Username</label>
+          {/* Username edit button - commented out because username cannot be changed
           {!isEditingUsername && (
             <button
               onClick={() => setIsEditingUsername(true)}
@@ -75,10 +76,12 @@ const AccountDetailsCard = ({
               <i className="ri-edit-line"></i> Edit
             </button>
           )}
+          */}
         </div>
-        {!isEditingUsername ? (
-          <p className='text-2xl font-bold text-gray-800 break-words overflow-wrap-anywhere'>{user.username}</p>
-        ) : (
+        <p className='text-2xl font-bold text-gray-800 break-words overflow-wrap-anywhere'>{user.username}</p>
+
+        {/* Username edit form - commented out because username cannot be changed
+        {isEditingUsername && (
           <div className='space-y-3'>
             <input
               type="text"
@@ -106,6 +109,7 @@ const AccountDetailsCard = ({
             </div>
           </div>
         )}
+        */}
       </div>
 
       {/* Email Section */}

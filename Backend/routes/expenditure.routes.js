@@ -14,13 +14,13 @@ router.post('/add', authMiddleware.authUser, [
     try {
         const { username } = req.user;
         const { amount, category, date, description, type } = req.body;
-        
+
         // Add expenditure first
         const expenditure = await expenditureController.addExpenditure({ username, amount, category, date, description, type });
-        
+
         // Send response immediately
         res.status(201).json(expenditure);
-        
+
         // Check limits and send alerts asynchronously for expenses (debit) - non-blocking
         if (type === 'debit') {
             alertService.checkAndSendAlerts(username, amount, category).catch(error => {
@@ -34,7 +34,7 @@ router.post('/add', authMiddleware.authUser, [
 
 router.get('/user/:username', authMiddleware.authUser, async (req, res) => {
     try {
-        const { username } = req.params;    
+        const { username } = req.params;
         const expenditures = await expenditureController.getExpendituresByUser(username);
         res.status(200).json(expenditures);
     } catch (error) {
@@ -42,7 +42,7 @@ router.get('/user/:username', authMiddleware.authUser, async (req, res) => {
     }
 });
 
-router.delete('/delete/:id', authMiddleware.authUser,  async (req, res) => {
+router.delete('/delete/:id', authMiddleware.authUser, async (req, res) => {
     try {
         const { id } = req.params;
         await expenditureController.deleteExpenditure(id);

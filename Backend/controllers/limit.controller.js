@@ -6,7 +6,7 @@ module.exports.getLimits = async (req, res, next) => {
     try {
         const username = req.user.username;
         const analysis = await limitService.getSpendingAnalysis(username);
-        
+
         res.status(200).json(analysis);
     } catch (error) {
         console.error('Get limits error:', error);
@@ -19,10 +19,10 @@ module.exports.updateLimits = async (req, res, next) => {
     try {
         const username = req.user.username;
         const { categoryLimits, monthlyBudget, dailyLimit, savingsGoal, weeklyLimit } = req.body;
-        
+
         // Prepare update data
         const updateData = {};
-        
+
         if (categoryLimits !== undefined) {
             updateData.categoryLimits = categoryLimits;
         }
@@ -38,12 +38,12 @@ module.exports.updateLimits = async (req, res, next) => {
         if (weeklyLimit !== undefined) {
             updateData.weeklyLimit = Math.max(0, weeklyLimit);
         }
-        
+
         const updatedLimit = await limitService.updateLimit(username, updateData);
-        
-        res.status(200).json({ 
-            message: 'Limits updated successfully', 
-            limits: updatedLimit 
+
+        res.status(200).json({
+            message: 'Limits updated successfully',
+            limits: updatedLimit
         });
     } catch (error) {
         console.error('Update limits error:', error);
@@ -56,36 +56,36 @@ module.exports.updateCategoryLimit = async (req, res, next) => {
     try {
         const username = req.user.username;
         const { category, amount } = req.body;
-        
+
         if (!category || amount === undefined) {
             return res.status(400).json({ message: 'Category and amount are required' });
         }
-        
+
         const validCategories = ['food', 'transport', 'shopping', 'entertainment', 'bills', 'healthcare', 'education', 'other'];
         if (!validCategories.includes(category)) {
             return res.status(400).json({ message: 'Invalid category' });
         }
-        
+
         // Get current limits
         let limits = await limitService.getLimitByUsername(username);
-        
+
         if (!limits) {
             // Create new limits if they don't exist
-            limits = await limitService.createLimit({ 
+            limits = await limitService.createLimit({
                 username,
                 categoryLimits: { [category]: Math.max(0, amount) }
             });
         } else {
             // Update specific category
-            const updateData = { 
-                [`categoryLimits.${category}`]: Math.max(0, amount) 
+            const updateData = {
+                [`categoryLimits.${category}`]: Math.max(0, amount)
             };
             limits = await limitService.updateLimit(username, updateData);
         }
-        
-        res.status(200).json({ 
-            message: `${category} limit updated successfully`, 
-            limits 
+
+        res.status(200).json({
+            message: `${category} limit updated successfully`,
+            limits
         });
     } catch (error) {
         console.error('Update category limit error:', error);
@@ -98,7 +98,7 @@ module.exports.getSpendingProgress = async (req, res, next) => {
     try {
         const username = req.user.username;
         const analysis = await limitService.getSpendingAnalysis(username);
-        
+
         // Return simplified progress data
         const progress = {
             monthly: {
@@ -127,7 +127,7 @@ module.exports.getSpendingProgress = async (req, res, next) => {
             },
             categories: analysis.categoryAlerts
         };
-        
+
         res.status(200).json(progress);
     } catch (error) {
         console.error('Get spending progress error:', error);
@@ -139,7 +139,7 @@ module.exports.getSpendingProgress = async (req, res, next) => {
 module.exports.resetLimits = async (req, res, next) => {
     try {
         const username = req.user.username;
-        
+
         const resetData = {
             categoryLimits: {
                 food: 0,
@@ -156,12 +156,12 @@ module.exports.resetLimits = async (req, res, next) => {
             savingsGoal: 0,
             weeklyLimit: 0
         };
-        
+
         const updatedLimit = await limitService.updateLimit(username, resetData);
-        
-        res.status(200).json({ 
-            message: 'All limits reset successfully', 
-            limits: updatedLimit 
+
+        res.status(200).json({
+            message: 'All limits reset successfully',
+            limits: updatedLimit
         });
     } catch (error) {
         console.error('Reset limits error:', error);

@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 
 const limitSchema = new mongoose.Schema({
-    username: { 
-        type: String, 
-        required: true, 
+    username: {
+        type: String,
+        required: true,
         unique: true,
         ref: 'user'
     },
@@ -19,31 +19,31 @@ const limitSchema = new mongoose.Schema({
         other: { type: Number, default: null }
     },
     // Overall Monthly Budget Limit
-    monthlyBudget: { 
-        type: Number, 
+    monthlyBudget: {
+        type: Number,
         default: null,
         min: 0
     },
     // Daily Spending Limit
-    dailyLimit: { 
-        type: Number, 
+    dailyLimit: {
+        type: Number,
         default: null,
         min: 0
     },
     // Monthly Savings Goal
-    savingsGoal: { 
-        type: Number, 
+    savingsGoal: {
+        type: Number,
         default: null,
         min: 0
     },
     // Weekly Budget Limit
-    weeklyLimit: { 
-        type: Number, 
+    weeklyLimit: {
+        type: Number,
         default: null,
         min: 0
     }
-}, { 
-    timestamps: true 
+}, {
+    timestamps: true
 });
 
 const limitModel = mongoose.model('Limit', limitSchema);
