@@ -1,6 +1,6 @@
 const expenditureService = require('../services/expenditure.servies');
 
-module.exports.addExpenditure = async ({username, amount, category, date, description, type}) => {
+module.exports.addExpenditure = async ({ username, amount, category, date, description, type }) => {
     const expenditure = await expenditureService.addExpenditure({
         username,
         amount,

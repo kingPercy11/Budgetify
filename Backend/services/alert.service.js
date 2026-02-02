@@ -28,7 +28,7 @@ module.exports.checkAndSendAlerts = async (username, amount, category) => {
             if (categoryData.limit > 0) {
                 const previousSpent = categoryData.spent - amount;
                 const previousPercentage = (previousSpent / categoryData.limit) * 100;
-                
+
                 // Check if we crossed 80%, 90%, or 100% threshold
                 if (shouldSendAlert(previousPercentage, categoryData.percentage)) {
                     alerts.push({
@@ -48,7 +48,7 @@ module.exports.checkAndSendAlerts = async (username, amount, category) => {
         if (analysis.monthly && analysis.monthly.budget > 0) {
             const previousSpent = analysis.monthly.totalSpent - amount;
             const previousPercentage = (previousSpent / analysis.monthly.budget) * 100;
-            
+
             if (shouldSendAlert(previousPercentage, analysis.monthly.percentage)) {
                 alerts.push({
                     username,
@@ -66,7 +66,7 @@ module.exports.checkAndSendAlerts = async (username, amount, category) => {
         if (analysis.daily && analysis.daily.limit > 0) {
             const previousSpent = analysis.daily.spent - amount;
             const previousPercentage = (previousSpent / analysis.daily.limit) * 100;
-            
+
             if (shouldSendAlert(previousPercentage, analysis.daily.percentage)) {
                 alerts.push({
                     username,
@@ -84,7 +84,7 @@ module.exports.checkAndSendAlerts = async (username, amount, category) => {
         if (analysis.weekly && analysis.weekly.limit > 0) {
             const previousSpent = analysis.weekly.spent - amount;
             const previousPercentage = (previousSpent / analysis.weekly.limit) * 100;
-            
+
             if (shouldSendAlert(previousPercentage, analysis.weekly.percentage)) {
                 alerts.push({
                     username,
@@ -128,15 +128,15 @@ function shouldSendAlert(previousPercentage, currentPercentage) {
     // Send alert if:
     // 1. Crossed 80% threshold
     if (previousPercentage < 80 && currentPercentage >= 80) return true;
-    
+
     // 2. Crossed 90% threshold
     if (previousPercentage < 90 && currentPercentage >= 90) return true;
-    
+
     // 3. Crossed 100% threshold (first time)
     if (previousPercentage < 100 && currentPercentage >= 100) return true;
-    
+
     // 4. Already over 100% (send on every expense)
     if (previousPercentage >= 100 && currentPercentage >= 100) return true;
-    
+
     return false;
 }
