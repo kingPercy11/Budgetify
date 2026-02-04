@@ -51,7 +51,8 @@ const Analysis = () => {
   const [expenses, setExpenses] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [dateRange, setDateRange] = useState('30')
+  const [periodFilter, setPeriodFilter] = useState('all') // Dropdown filter: all, day, week, month, prevMonth
+  const [dayRange, setDayRange] = useState('') // Button filter: 7, 30, 90, 365
   const [filteredExpenses, setFilteredExpenses] = useState([])
 
   useEffect(() => {
@@ -62,25 +63,25 @@ const Analysis = () => {
 
   useEffect(() => {
     filterExpensesByDateRange()
-  }, [expenses, dateRange])
+  }, [expenses, periodFilter, dayRange])
 
   const fetchExpenses = async () => {
     try {
       setError('')
       const token = localStorage.getItem('token')
-      
+
       const response = await axios.get(
         `${import.meta.env.VITE_BASE_URL}/expenditures/user/${user.username}`,
         {
           headers: { Authorization: `Bearer ${token}` }
         }
       )
-      
+
       const expensesWithType = response.data.map(exp => ({
         ...exp,
         type: exp.type || 'debit'
       }))
-      
+
       setExpenses(expensesWithType)
     } catch (error) {
       setError(error.response?.data?.message || 'Failed to fetch expenses')
@@ -89,34 +90,104 @@ const Analysis = () => {
     }
   }
 
+  // Helper function to format date in local timezone (YYYY-MM-DD)
+  const formatLocalDate = (date) => {
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
+
   const filterExpensesByDateRange = () => {
-    if (dateRange === 'all') {
+    // If both are default/empty, show all
+    if (periodFilter === 'all' && !dayRange) {
       setFilteredExpenses(expenses)
       return
     }
 
-    const days = parseInt(dateRange)
-    const cutoffDate = new Date()
-    cutoffDate.setDate(cutoffDate.getDate() - days)
+    const today = new Date()
+    let startDate, endDate
+
+    // Day range button takes priority if set
+    if (dayRange) {
+      const days = parseInt(dayRange)
+      const cutoffDate = new Date()
+      cutoffDate.setDate(cutoffDate.getDate() - days)
+      startDate = formatLocalDate(cutoffDate)
+      endDate = formatLocalDate(today)
+    } else {
+      // Period filter from dropdown
+      switch (periodFilter) {
+        case 'day':
+          startDate = formatLocalDate(today)
+          endDate = formatLocalDate(today)
+          break
+        case 'week':
+          const weekStart = new Date(today)
+          weekStart.setDate(today.getDate() - today.getDay()) // Start of week (Sunday)
+          startDate = formatLocalDate(weekStart)
+          endDate = formatLocalDate(today)
+          break
+        case 'month':
+          const monthStart = new Date(today.getFullYear(), today.getMonth(), 1)
+          startDate = formatLocalDate(monthStart)
+          endDate = formatLocalDate(today)
+          break
+        case 'prevMonth':
+          const prevMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1)
+          const prevMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0)
+          startDate = formatLocalDate(prevMonthStart)
+          endDate = formatLocalDate(prevMonthEnd)
+          break
+        default: // 'all'
+          setFilteredExpenses(expenses)
+          return
+      }
+    }
 
     const filtered = expenses.filter(expense => {
-      const expenseDate = new Date(expense.date)
-      return expenseDate >= cutoffDate
+      const expDate = formatLocalDate(new Date(expense.date))
+      return expDate >= startDate && expDate <= endDate
     })
     setFilteredExpenses(filtered)
+  }
+
+  // Handler for dropdown - clears day range buttons
+  const handlePeriodChange = (value) => {
+    setPeriodFilter(value)
+    setDayRange('') // Clear day range when dropdown is used
+  }
+
+  // Handler for day range buttons - resets dropdown to 'all'
+  const handleDayRangeClick = (days) => {
+    setDayRange(days)
+    setPeriodFilter('all') // Reset dropdown when button is used
   }
 
   const getSummary = () => {
     const totalIncome = filteredExpenses
       .filter(e => e.type === 'credit')
       .reduce((sum, e) => sum + e.amount, 0)
-    
+
     const totalExpenses = filteredExpenses
       .filter(e => e.type === 'debit')
       .reduce((sum, e) => sum + e.amount, 0)
-    
+
     const netSavings = totalIncome - totalExpenses
-    const days = dateRange === 'all' ? 30 : parseInt(dateRange)
+    // Calculate days based on active filter
+    let days = 30 // default
+    if (dayRange) {
+      days = parseInt(dayRange)
+    } else if (periodFilter === 'day') {
+      days = 1
+    } else if (periodFilter === 'week') {
+      days = 7
+    } else if (periodFilter === 'month') {
+      days = new Date().getDate() // Days elapsed in current month
+    } else if (periodFilter === 'prevMonth') {
+      const now = new Date()
+      days = new Date(now.getFullYear(), now.getMonth(), 0).getDate() // Days in previous month
+    }
     const avgDaily = totalExpenses / days
 
     return { totalIncome, totalExpenses, netSavings, avgDaily }
@@ -124,7 +195,7 @@ const Analysis = () => {
 
   const getCategoryData = () => {
     const categoryTotals = {}
-    
+
     filteredExpenses
       .filter(e => e.type === 'debit')
       .forEach(expense => {
@@ -148,7 +219,7 @@ const Analysis = () => {
       if (!monthlyData[month]) {
         monthlyData[month] = { income: 0, expenses: 0 }
       }
-      
+
       if (expense.type === 'credit') {
         monthlyData[month].income += expense.amount
       } else {
@@ -156,7 +227,7 @@ const Analysis = () => {
       }
     })
 
-    const sortedMonths = Object.keys(monthlyData).sort((a, b) => 
+    const sortedMonths = Object.keys(monthlyData).sort((a, b) =>
       new Date(a) - new Date(b)
     )
 
@@ -213,7 +284,7 @@ const Analysis = () => {
       if (!dailyData[day]) {
         dailyData[day] = { income: 0, expenses: 0 }
       }
-      
+
       if (expense.type === 'credit') {
         dailyData[day].income += expense.amount
       } else {
@@ -234,27 +305,38 @@ const Analysis = () => {
     let score = 0
     const breakdown = {}
 
+    // Savings Rate (max 30 pts) - based on % of income saved
     const savingsRate = totalIncome > 0 ? (netSavings / totalIncome) : 0
     const savingsScore = Math.min(30, Math.max(0, savingsRate * 100 * 0.3))
     score += savingsScore
-    breakdown.savings = savingsScore
+    breakdown.savings = Math.round(savingsScore)
 
+    // Income Consistency (max 20 pts) - based on number of income transactions
     const creditTransactions = filteredExpenses.filter(e => e.type === 'credit')
-    const incomeConsistency = creditTransactions.length > 0 ? Math.min(20, creditTransactions.length * 2) : 0
+    const incomeConsistency = Math.min(20, Math.max(0, creditTransactions.length * 2))
     score += incomeConsistency
-    breakdown.incomeConsistency = incomeConsistency
+    breakdown.incomeConsistency = Math.round(incomeConsistency)
 
-    const avgDaily = getSummary().avgDaily
-    const expenseControl = totalIncome > 0 ? Math.min(30, 30 - (avgDaily / (totalIncome / 30)) * 30) : 0
+    // Expense Control (max 30 pts) - based on spending vs income ratio
+    let expenseControl = 0
+    if (totalIncome > 0) {
+      const spendingRatio = totalExpenses / totalIncome
+      // Lower spending ratio = higher score (spending 50% or less = full 30 pts)
+      expenseControl = Math.min(30, Math.max(0, (1 - spendingRatio) * 30))
+    } else if (totalExpenses === 0) {
+      expenseControl = 30 // No expenses = perfect score
+    }
     score += expenseControl
-    breakdown.expenseControl = expenseControl
+    breakdown.expenseControl = Math.round(expenseControl)
 
+    // Diversification (max 20 pts) - based on category variety
     const categories = new Set(filteredExpenses.map(e => e.category))
-    const diversification = Math.min(20, categories.size * 2)
+    const diversification = Math.min(20, Math.max(0, categories.size * 2))
     score += diversification
-    breakdown.diversification = diversification
+    breakdown.diversification = Math.round(diversification)
 
-    return { score: Math.round(score), breakdown }
+    // Ensure final score is between 0 and 100
+    return { score: Math.min(100, Math.max(0, Math.round(score))), breakdown }
   }
 
   const getPredictions = () => {
@@ -355,9 +437,9 @@ const Analysis = () => {
     const now = new Date()
     const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
     const recentDiningOut = expenses.filter(e => {
-      return e.type === 'debit' && 
-             e.category.toLowerCase().includes('food') && 
-             new Date(e.date) >= sevenDaysAgo
+      return e.type === 'debit' &&
+        e.category.toLowerCase().includes('food') &&
+        new Date(e.date) >= sevenDaysAgo
     })
 
     if (recentDiningOut.length === 0 && expenses.length > 10) {
@@ -384,7 +466,7 @@ const Analysis = () => {
   const getInsights = () => {
     const { totalIncome, totalExpenses, netSavings } = getSummary()
     const categoryData = getCategoryData()
-    
+
     const insights = []
 
     if (categoryData.labels.length > 0) {
@@ -421,7 +503,7 @@ const Analysis = () => {
     const highestExpense = filteredExpenses
       .filter(e => e.type === 'debit')
       .sort((a, b) => b.amount - a.amount)[0]
-    
+
     if (highestExpense) {
       insights.push({
         icon: 'ri-arrow-up-circle-line',
@@ -475,7 +557,7 @@ const Analysis = () => {
           <i className="ri-error-warning-line text-5xl text-red-600 block mb-4 text-center"></i>
           <h2 className="text-2xl font-bold text-gray-800 mb-2 text-center">Error Loading Data</h2>
           <p className="text-gray-600 text-center mb-4">{error}</p>
-          <button 
+          <button
             onClick={() => { setError(''); setLoading(true); fetchExpenses(); }}
             className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
           >
@@ -492,29 +574,45 @@ const Analysis = () => {
   return (
     <div className="min-h-screen bg-cover bg-center bg-[url('/Home.png')] bg-fixed">
       <div className="fixed inset-0 bg-gradient-to-b from-blue-900/50 via-blue-600/40 to-blue-900/50 backdrop-blur-md"></div>
-      
+
       <AnalysisHeader isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
 
       <div className="relative z-10 pt-24 px-4 pb-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-            <h1 className="text-3xl md:text-4xl font-bold text-white drop-shadow-lg">
-              <i className="ri-bar-chart-box-line mr-2"></i>
-              Financial Analysis
-            </h1>
-            
-            <div className="flex gap-2">
-              {['7', '30', '90', '365', 'all'].map(range => (
-                <button
-                  key={range}
-                  onClick={() => setDateRange(range)}
-                  className={`px-3 py-2 rounded-lg font-semibold transition-all ${
-                    dateRange === range
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-white/80 text-blue-900 hover:bg-white'
+            <div className="flex items-center gap-4">
+              <h1 className="text-3xl md:text-4xl font-bold text-white drop-shadow-lg">
+                <i className="ri-bar-chart-box-line mr-2"></i>
+                Financial Analysis
+              </h1>
+
+              {/* Period Dropdown Filter - Left Side */}
+              <select
+                value={periodFilter}
+                onChange={(e) => handlePeriodChange(e.target.value)}
+                className={`px-3 py-2 rounded-lg font-semibold transition-all cursor-pointer ${dayRange ? 'bg-white/80 text-blue-900' : 'bg-blue-600 text-white'
                   }`}
+              >
+                <option value="all">All Time</option>
+                <option value="day">Today</option>
+                <option value="week">This Week</option>
+                <option value="month">This Month</option>
+                <option value="prevMonth">Prev Month</option>
+              </select>
+            </div>
+
+            {/* Day Range Buttons - Right Side */}
+            <div className="flex gap-2 flex-wrap">
+              {['7', '30', '90', '365'].map(days => (
+                <button
+                  key={days}
+                  onClick={() => handleDayRangeClick(days)}
+                  className={`px-3 py-2 rounded-lg font-semibold transition-all ${dayRange === days
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-white/80 text-blue-900 hover:bg-white'
+                    }`}
                 >
-                  {range === 'all' ? 'All' : `${range}d`}
+                  {days}d
                 </button>
               ))}
             </div>
