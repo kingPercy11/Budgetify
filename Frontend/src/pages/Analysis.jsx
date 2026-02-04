@@ -305,27 +305,38 @@ const Analysis = () => {
     let score = 0
     const breakdown = {}
 
+    // Savings Rate (max 30 pts) - based on % of income saved
     const savingsRate = totalIncome > 0 ? (netSavings / totalIncome) : 0
     const savingsScore = Math.min(30, Math.max(0, savingsRate * 100 * 0.3))
     score += savingsScore
-    breakdown.savings = savingsScore
+    breakdown.savings = Math.round(savingsScore)
 
+    // Income Consistency (max 20 pts) - based on number of income transactions
     const creditTransactions = filteredExpenses.filter(e => e.type === 'credit')
-    const incomeConsistency = creditTransactions.length > 0 ? Math.min(20, creditTransactions.length * 2) : 0
+    const incomeConsistency = Math.min(20, Math.max(0, creditTransactions.length * 2))
     score += incomeConsistency
-    breakdown.incomeConsistency = incomeConsistency
+    breakdown.incomeConsistency = Math.round(incomeConsistency)
 
-    const avgDaily = getSummary().avgDaily
-    const expenseControl = totalIncome > 0 ? Math.min(30, 30 - (avgDaily / (totalIncome / 30)) * 30) : 0
+    // Expense Control (max 30 pts) - based on spending vs income ratio
+    let expenseControl = 0
+    if (totalIncome > 0) {
+      const spendingRatio = totalExpenses / totalIncome
+      // Lower spending ratio = higher score (spending 50% or less = full 30 pts)
+      expenseControl = Math.min(30, Math.max(0, (1 - spendingRatio) * 30))
+    } else if (totalExpenses === 0) {
+      expenseControl = 30 // No expenses = perfect score
+    }
     score += expenseControl
-    breakdown.expenseControl = expenseControl
+    breakdown.expenseControl = Math.round(expenseControl)
 
+    // Diversification (max 20 pts) - based on category variety
     const categories = new Set(filteredExpenses.map(e => e.category))
-    const diversification = Math.min(20, categories.size * 2)
+    const diversification = Math.min(20, Math.max(0, categories.size * 2))
     score += diversification
-    breakdown.diversification = diversification
+    breakdown.diversification = Math.round(diversification)
 
-    return { score: Math.round(score), breakdown }
+    // Ensure final score is between 0 and 100
+    return { score: Math.min(100, Math.max(0, Math.round(score))), breakdown }
   }
 
   const getPredictions = () => {
