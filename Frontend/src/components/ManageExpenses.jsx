@@ -43,6 +43,20 @@ const ManageExpenses = () => {
         start = formatLocalDate(yesterday)
         end = formatLocalDate(yesterday)
         break
+      case 'currWeek':
+        const currWeekStart = new Date(today)
+        currWeekStart.setDate(today.getDate() - today.getDay()) // Start of week (Sunday)
+        start = formatLocalDate(currWeekStart)
+        end = formatLocalDate(today)
+        break
+      case 'prevWeek':
+        const prevWeekEnd = new Date(today)
+        prevWeekEnd.setDate(today.getDate() - today.getDay() - 1) // End of previous week (Saturday)
+        const prevWeekStart = new Date(prevWeekEnd)
+        prevWeekStart.setDate(prevWeekEnd.getDate() - 6) // Start of previous week (Sunday)
+        start = formatLocalDate(prevWeekStart)
+        end = formatLocalDate(prevWeekEnd)
+        break
       case 'currMonth':
         const firstDay = new Date(today.getFullYear(), today.getMonth(), 1)
         start = formatLocalDate(firstDay)
@@ -81,7 +95,7 @@ const ManageExpenses = () => {
           {/* Period Filter */}
           <div className='flex flex-col gap-1'>
             <label className='text-xs font-semibold text-blue-900'>Period</label>
-            <select 
+            <select
               value={filterPeriod}
               onChange={(e) => setFilterPeriod(e.target.value)}
               className='px-3 py-2 rounded-lg border border-blue-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm cursor-pointer'
@@ -89,6 +103,8 @@ const ManageExpenses = () => {
               <option value='all'>All Time</option>
               <option value='current'>Current Day</option>
               <option value='previous'>Previous Day</option>
+              <option value='currWeek'>Current Week</option>
+              <option value='prevWeek'>Previous Week</option>
               <option value='currMonth'>Current Month</option>
               <option value='prevMonth'>Previous Month</option>
               <option value='currQuarter'>Current Quarter</option>
@@ -99,7 +115,7 @@ const ManageExpenses = () => {
           {/* Category Filter */}
           <div className='flex flex-col gap-1'>
             <label className='text-xs font-semibold text-blue-900'>Category</label>
-            <select 
+            <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
               className='px-3 py-2 rounded-lg border border-blue-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm cursor-pointer'
@@ -119,7 +135,7 @@ const ManageExpenses = () => {
           {/* Type Filter */}
           <div className='flex flex-col gap-1'>
             <label className='text-xs font-semibold text-blue-900'>Type</label>
-            <select 
+            <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
               className='px-3 py-2 rounded-lg border border-blue-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm cursor-pointer'
@@ -133,7 +149,7 @@ const ManageExpenses = () => {
           {/* Search Filter */}
           <div className='flex flex-col gap-1'>
             <label className='text-xs font-semibold text-blue-900'>Search</label>
-            <input 
+            <input
               type='text'
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -147,8 +163,8 @@ const ManageExpenses = () => {
             <>
               <div className='flex flex-col gap-1'>
                 <label className='text-xs font-semibold text-blue-900'>Start Date</label>
-                <input 
-                  type='date' 
+                <input
+                  type='date'
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
                   className='px-3 py-2 rounded-lg border border-blue-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm'
@@ -157,8 +173,8 @@ const ManageExpenses = () => {
 
               <div className='flex flex-col gap-1'>
                 <label className='text-xs font-semibold text-blue-900'>End Date</label>
-                <input 
-                  type='date' 
+                <input
+                  type='date'
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
                   className='px-3 py-2 rounded-lg border border-blue-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm'
@@ -168,7 +184,7 @@ const ManageExpenses = () => {
           )}
         </div>
 
-        <button 
+        <button
           onClick={() => setIsModalOpen(true)}
           className='bg-green-500 rounded-xl inline-flex items-center gap-1 text-black font-bold px-4 py-2 hover:bg-green-600 transition-colors duration-300 shadow-lg hover:shadow-xl'
         >
@@ -178,8 +194,8 @@ const ManageExpenses = () => {
       </div>
 
       {/* Expense List */}
-      <ExpenseList 
-        startDate={dateRange.start} 
+      <ExpenseList
+        startDate={dateRange.start}
         endDate={dateRange.end}
         categoryFilter={categoryFilter}
         typeFilter={typeFilter}
@@ -187,8 +203,8 @@ const ManageExpenses = () => {
         refreshTrigger={refreshTrigger}
       />
 
-      <AddExpense 
-        isOpen={isModalOpen} 
+      <AddExpense
+        isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onExpenseAdded={handleExpenseAdded}
       />
